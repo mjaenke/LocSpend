@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">LocSpend</string>
+    <string name="date">October 2024</string>
+    <string name="total_budget">Total Budget: %1$d</string>
+    <string name="total_spent">Total Spent: %1$d</string>
+    <string name="total_remaining">Total Remaining: %1$d</string>
+    <string name="percent_budget">65%</string>
+    <string name="percent_month">50%</string>
+    <string name="through_budget">through budget</string>
+    <string name="through_month">through month</string>
+    <string name="dining">Dining</string>
 </resources>
