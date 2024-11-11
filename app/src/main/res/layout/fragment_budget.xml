@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,7 +24,7 @@
             android:id="@+id/total_budget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:text="@string/total_budget"
             android:textSize="20sp" />
@@ -34,7 +33,7 @@
             android:id="@+id/total_spent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:text="@string/total_spent"
             android:textSize="20sp" />
@@ -43,11 +42,10 @@
             android:id="@+id/total_remaining"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:text="@string/total_remaining"
             android:textSize="20sp" />
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,7 +69,6 @@
                 android:layout_marginTop="20dp"
                 android:text="@string/percent_budget"
                 android:textSize="35sp" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -94,135 +91,29 @@
                 android:layout_marginStart="100dp"
                 android:gravity="center"
                 android:text="@string/through_month" />
-
         </LinearLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="246dp"
-            android:layout_height="166dp"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="20dp"
-            android:background="#FF4747"
-            android:padding="10dp">
-
-            <!-- Plus Icon Button -->
-            <TextView
-                android:id="@+id/dining"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="@string/dining"
-                android:textColor="#FFFFFF"
-                android:textSize="30sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.055" />
-
-            <ImageButton
-                android:id="@+id/add_button"
-                android:layout_width="40dp"
-                android:layout_height="35dp"
-                android:layout_marginEnd="10dp"
-                android:background="@null"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_add_purchase_icon"
-                app:layout_constraintBottom_toBottomOf="@id/dining"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/dining"
-                app:tint="#000000" />
-
-            <!-- Content Background (Gray Section) -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
             <LinearLayout
-                android:id="@+id/content_layout"
-                android:layout_width="222dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="#D3D3D3"
-                android:orientation="vertical"
-                android:padding="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dining">
+                android:orientation="vertical">
 
-                <!-- Budget Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal">
+                <include
+                    android:id="@+id/budget_table_dining"
+                    layout="@layout/budget_table" />
 
-                    <TextView
-                        android:id="@+id/budget_label"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Budget:"
-                        android:textColor="#000000"
-                        android:textSize="16sp" />
+                <include
+                    android:id="@+id/budget_table_groceries"
+                    layout="@layout/budget_table" />
 
-                    <TextView
-                        android:id="@+id/budget_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="$125.00"
-                        android:textColor="#000000"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                <include
+                    android:id="@id/budget_table_groceries"
+                    layout="@layout/budget_table" />
 
-                <!-- Spent Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/spent_label"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Spent:"
-                        android:textColor="#000000"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/spent_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="$45.00"
-                        android:textColor="#000000"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <!-- Remaining Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/remaining_label"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Remaining:"
-                        android:textColor="#000000"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/remaining_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="$80.00"
-                        android:textColor="#000000"
-                        android:textSize="16sp" />
-                </LinearLayout>
             </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
+        </ScrollView>
     </LinearLayout>
 </FrameLayout>

@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.cs407.locspend"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.cs407.locspend"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = 26
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
