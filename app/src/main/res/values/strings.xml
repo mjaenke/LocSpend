@@ -16,4 +16,17 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Settings Fragment -->
+    <string name="settingsString">Settings</string>
+    <string name="defaultBudgetString">Default Monthly Budgets:</string>
+    <string name="diningString">Dining</string>
+    <string name="groceryString">Grocery</string>
+    <string name="clothingString">Clothing</string>
+    <string name="transportationString">Transportation</string>
+    <string name="entertainmentString">Entertainment</string>
+    <string name="miscString">Miscellaneous</string>
+    <string name="darkModeString">Dark Mode:</string>
+    <string name="notificationString">Notification:</string>
 </resources>
