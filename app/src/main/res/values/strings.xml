@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">LocSpend</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="addr">Address</string>
+
+    <string name="addr">Memorial Union\n800 Langdon St\nMadison, WI 53706</string>
     <string name="category">Category: Dining</string>
     <string name="plus">+</string>
     <string name="addSpending">Add spending</string>
@@ -9,4 +9,8 @@
     <string name="spent">Spent: $45</string>
     <string name="remaining">Remaining: $80</string>
     <string name="summary">36% through budget, 50% through month</string>
+    <string name="header">LocSpend</string>
+    <string name="homeButton">Home</string>
+    <string name="budgetButton">Budget</string>
+    <string name="settingsButton">Settings</string>
 </resources>
