@@ -175,30 +175,59 @@
                 android:inputType="number" />
         </LinearLayout>
 
-        <Switch
-            android:id="@+id/darkModeSwitch"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/darkModeString"
-            android:paddingLeft="90dp"
-            android:paddingRight="150dp"
             android:layout_marginTop="60dp"
-            android:textSize="20sp"
+            android:orientation="horizontal"
             android:background="#D9D9D9"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"/>
+            >
 
-        <Switch
-            android:id="@+id/notificationSwitch"
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_darkmode_icon"
+                android:layout_gravity="center"
+                android:layout_marginStart="75dp" />
+
+            <Switch
+                android:id="@+id/darkModeSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/darkModeString"
+                android:textSize="20sp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingRight="120dp"
+                android:layout_marginLeft="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/notificationString"
-            android:paddingLeft="90dp"
-            android:paddingRight="150dp"
-            android:textSize="20sp"
-            android:background="#D9D9D9"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"/>
+            android:orientation="horizontal"
+            android:background="#D9D9D9">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_notification_icon"
+                android:layout_gravity="center"
+                android:layout_marginStart="75dp" />
+
+            <Switch
+                android:id="@+id/notificationSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/notificationString"
+                android:textSize="20sp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingRight="120dp"
+                android:layout_marginLeft="10dp" />
+        </LinearLayout>
 
     </LinearLayout>
 
