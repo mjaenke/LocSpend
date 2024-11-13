@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LocSpend</string>
+    <string name="app_name">locSpend</string>
     <string name="date">October 2024</string>
     <string name="total_budget">Total Budget: %1$d</string>
     <string name="total_spent">Total Spent: %1$d</string>
@@ -9,4 +9,35 @@
     <string name="through_budget">through budget</string>
     <string name="through_month">through month</string>
     <string name="category">Category</string>
+
+    <!-- Jessica's -->
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Settings Fragment -->
+    <string name="settingsString">Settings</string>
+    <string name="defaultBudgetString">Default Monthly Budgets:</string>
+    <string name="diningString">Dining</string>
+    <string name="groceryString">Grocery</string>
+    <string name="clothingString">Clothing</string>
+    <string name="transportationString">Transportation</string>
+    <string name="entertainmentString">Entertainment</string>
+    <string name="miscString">Miscellaneous</string>
+    <string name="darkModeString">Dark Mode:</string>
+    <string name="notificationString">Notification:</string>
 </resources>
