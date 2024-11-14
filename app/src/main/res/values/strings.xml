@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">locSpend</string>
+    <string name="app_name">LocSpend</string>
+    <string name="username_hint">Enter username</string>
+    <string name="password_hint">Enter password</string>
+    <string name="sign_in_button">Sign in</string>
+    <string name="username_text">Username:</string>
+    <string name="password_text">Password:</string>
+    <string name="create_account">Create Account</string>
+    <string name="number_hint">Enter number</string>
+    <string name="number_text">Number:</string>
+    <string name="email_hint">Enter email</string>
+    <string name="email_text">Email:</string>
+    <string name="terms_and_services">I agree to the Terms and Services</string>
+    <string name="get_started">GET STARTED</string>
+    <string name="fail_login">Wrong username or password</string>
 </resources>
