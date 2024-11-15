@@ -37,8 +37,7 @@ android {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/com.google.android.gms/play-services-location
-    implementation("com.google.android.gms:play-services-location:17.0.0")
+    implementation(libs.play.services.location)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
