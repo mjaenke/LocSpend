@@ -27,7 +27,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentContainerView"
-            android:name="com.cs407.locspend.BudgetFragment"
+            android:name="com.cs407.locspend.CreateAccountFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
