@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
 
@@ -34,13 +35,10 @@ class LoginFragment() : Fragment()  {
         createAccount = view.findViewById(R.id.createAccount)
         errorText = view.findViewById(R.id.errorTextView)
 
-
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-
         usernameEditText.doAfterTextChanged {
             errorText.visibility = View.GONE
         }
@@ -55,12 +53,12 @@ class LoginFragment() : Fragment()  {
             val name = usernameEditText.text.toString()
             val passwd = passwordEditText.text.toString()
 
-
             // navigate to another fragment after successful login
             lifecycleScope.launch {
                 val login_success = getUserPasswd(name, passwd)
                 if (login_success) {
                     // navigate to the home page
+                    Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_homeFragment)
                 } else {
                     errorText.visibility = View.VISIBLE
                 }
@@ -71,12 +69,12 @@ class LoginFragment() : Fragment()  {
                 errorText.text = "Username/Password cannot be empty"
                 errorText.visibility = View.VISIBLE
             }
-
         }
 
         createAccount.setOnClickListener{
             lifecycleScope.launch {
                 //navigate to the create account page
+                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_createAccountFragment)
             }
         }
     }
