@@ -11,7 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.app.ActivityCompat
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -59,40 +60,26 @@ class HomeFragment : Fragment() {
                 android.Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 1
-            )
+            // If no permission, request permission
+            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
         } else {
             // With permission, start listening to location
             startListening(locationListener)
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                0L, 10f, locationListener
-            )
-            val location: Location? =
-                locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            if (location != null) {
-                updateLocationInfo(location)
-            }
         }
 
         // Return view
         return view
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+    // Request location permission
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
                 startListening(locationListener)
             }
         }
-    }
 
     private fun startListening(locationListener: LocationListener) {
         // get location from the system
@@ -103,11 +90,8 @@ class HomeFragment : Fragment() {
         ) {
             locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
-                0L,
-                0f,
-                locationListener
+                0L, 10f, locationListener
             )
-
         }
     }
 
