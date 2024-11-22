@@ -11,6 +11,9 @@
     <string name="through_month">through month</string>
     <string name="table_category">Category</string>
 
+    <string name="budget_database">budgetDatabase</string>
+    <string name="userPasswdKV">com.cs407.locspend.userPasswdKV</string>
+
     <!-- Jessica -->
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
@@ -56,6 +59,8 @@
     <string name="terms_and_services">I agree to the Terms and Services</string>
     <string name="get_started">GET STARTED</string>
     <string name="fail_login">Wrong username or password</string>
+
+    <string name="fail_create">Create Account Failed</string>
 
     <!-- Morgan -->
     <string name="addr">Memorial Union\n800 Langdon St\nMadison, WI 53706</string>

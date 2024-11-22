@@ -138,5 +138,17 @@
         app:rippleColor="#F44336"
         app:strokeColor="#F44336" />
 
+    <TextView
+        android:id="@+id/errorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fail_create"
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/usernameEditText"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
