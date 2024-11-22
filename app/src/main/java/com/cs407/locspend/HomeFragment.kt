@@ -1,73 +1,142 @@
 package com.cs407.locspend
 
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.navigation.Navigation
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import java.util.Locale
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    private lateinit var homeAddButton : Button
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var addressText: TextView
+    private lateinit var client: FusedLocationProviderClient
+    private lateinit var locationManager: LocationManager
+    private lateinit var locationListener: LocationListener
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        // Initialize view
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        // Assign variable
+        addressText = view.findViewById(R.id.addr)
+
+        // Initialize location client
+        client = LocationServices
+            .getFusedLocationProviderClient(
+                requireActivity()
+            )
+
+        locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationListener = LocationListener { location: Location ->
+            updateLocationInfo(location)
+        }
+
+        // Check for location permission
+        if (ContextCompat.checkSelfPermission(
+                requireActivity(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // If no permission, request permission
+            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            // With permission, start listening to location
+            startListening(locationListener)
+        }
+
+        // Return view
+        return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        homeAddButton = view.findViewById(R.id.button)
+    // Request location permission
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                startListening(locationListener)
+            }
+        }
 
-        homeAddButton.setOnClickListener {
-            Navigation.findNavController(view)
-                .navigate(R.id.action_homeFragment_to_addSpendingFragment)
-
+    private fun startListening(locationListener: LocationListener) {
+        // get location from the system
+        if (ContextCompat.checkSelfPermission(
+                requireActivity(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                0L, 10f, locationListener
+            )
         }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    /*
+     * Updates the address text at the top of the screen using current location.
+     * Adds a marker on the map at the current location.
+     */
+    private fun updateLocationInfo(location: Location) {
+        val mapFragment =
+            childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
+        mapFragment?.getMapAsync { googleMap: GoogleMap ->
+            setLocationMarker(googleMap, LatLng(location.latitude, location.longitude))
+            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+            geocoder.getFromLocation(
+                location.latitude,
+                location.longitude, 1
+            ) { addresses ->
+                if (addresses.isNotEmpty()) {
+                    val address = addresses[0]
+                    var addressString = ""
+                    address.subThoroughfare?.let { addressString += "$it " }
+                    address.thoroughfare?.let { addressString += "$it\n" }
+                    address.locality?.let { addressString += it }
+                    address.adminArea?.let { addressString += ", $it " }
+                    address.postalCode?.let { addressString += it }
+                    addressText.text = addressString
                 }
             }
+        }
+    }
+
+    /**
+     * Adds marker representations of the places list on the provided GoogleMap object
+     */
+    private fun setLocationMarker(googleMap:GoogleMap, destination:LatLng) {
+        // clear previous marker
+        googleMap.clear()
+        // add marker for current location
+        googleMap.addMarker(
+            MarkerOptions()
+                .position(destination)
+        )
+        // zoom camera to the current location
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(destination, 15f))
+        // allow zooming on map
+        googleMap.uiSettings.isZoomGesturesEnabled = true
     }
 }
