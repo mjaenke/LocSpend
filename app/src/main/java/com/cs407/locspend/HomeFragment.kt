@@ -132,7 +132,6 @@ class HomeFragment : Fragment() {
         // add marker for current location
         googleMap.addMarker(
             MarkerOptions()
-                .title("LOCATION")
                 .position(destination)
         )
         // zoom camera to the current location
