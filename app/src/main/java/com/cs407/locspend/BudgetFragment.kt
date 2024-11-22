@@ -8,6 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -141,5 +145,25 @@ class BudgetFragment : Fragment() {
 
 
     }
+
+    private fun loadBudgets() {
+        val userState = userViewModel.userState.value
+        val userId = userState.id
+
+        if (userId == 0) {
+            Log.e("NoteListFragment", "Invalid user ID")
+            return
+        }
+        val pager = Pager(
+            config = PagingConfig(pageSize = 20, prefetchDistance = 5),
+            pagingSourceFactory = { noteDB.userDao().getUsersWithNoteListsByIdPaged(userId) }
+        )
+        lifecycleScope.launch {
+            pager.flow.cachedIn(lifecycleScope).collectLatest { pagingData ->
+                adapter.submitData(pagingData)
+            }
+        }
+    }
 }
+
 
