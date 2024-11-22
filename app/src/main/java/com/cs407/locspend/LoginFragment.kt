@@ -19,6 +19,7 @@ import java.security.MessageDigest
 import com.cs407.locspend.data.BudgetDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.navigation.Navigation
 import com.cs407.locspend.data.User
 
 class LoginFragment(
@@ -90,7 +91,7 @@ class LoginFragment(
                         )
                     )
                     Log.d("Valid User", "True")
-                    //findNavController().navigate(R.id.action_loginFragment_to_HomeFragment)
+                    Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_homeFragment)
                 } else {
                     Log.d("Valid User", "False")
                     errorText.visibility = View.VISIBLE
@@ -108,7 +109,7 @@ class LoginFragment(
         createAccount.setOnClickListener{
             lifecycleScope.launch {
                 //navigate to the create account page
-                //findNavController().navigate(R.id.action_loginFragment_to_CreateAccountFragment)
+                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_createAccountFragment)
             }
         }
     }

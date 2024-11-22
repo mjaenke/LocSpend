@@ -45,6 +45,7 @@ class BudgetFragment : Fragment() {
         budgetItemGroceries.findViewById<TextView>(R.id.remaining_value).text = "$150.00"
     }
 
+    /*
     private fun loadBudgets() {
         val userState = userViewModel.userState.value
         val userId = userState.id
@@ -63,4 +64,6 @@ class BudgetFragment : Fragment() {
             }
         }
     }
+
+     */
 }
