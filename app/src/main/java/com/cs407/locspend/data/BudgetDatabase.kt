@@ -48,12 +48,12 @@ class Converters {
     }
 }
 
-// Note Entity with primary key and various fields including nullable fields
+// Budget Entity with primary key and various fields including nullable fields
 @Entity
 data class Budget (
     @PrimaryKey(autoGenerate = true) val budgetId : Int = 0,
     val budgetCategory: String,
-    val budgetAbstract: String,
+    val budgetAmount: Double,
 
     @ColumnInfo(typeAffinity = ColumnInfo.TEXT) val budgetDetail : String?,
     val budgetPath : String?,
@@ -68,7 +68,7 @@ data class Budget (
         childColumns = ["userId"],
         onDelete = ForeignKey.CASCADE
     ), ForeignKey(
-        entity = Budget::class, // Foreign key referencing Note
+        entity = Budget::class, // Foreign key referencing Budget
         parentColumns = ["budgetId"],
         childColumns = ["budgetId"],
         onDelete = ForeignKey.CASCADE
@@ -82,7 +82,7 @@ data class UserBudgetRelation (
 data class BudgetSummary (
     val budgetId: Int,
     val budgetCategory : String,
-    val budgetAbstract : String,
+    val budgetAmount : Double,
     val lastEdited : Date
 )
 
@@ -97,7 +97,7 @@ interface UserDao {
     @Query("SELECT * FROM user WHERE userId = :id")
     suspend fun getById(id : Int) : User
 
-    // Query to get NoteSummary from user (ordered by lastEdited)
+    // Query to get BudgetSummary from user (ordered by lastEdited)
     @Query(
         """SELECT * FROM User, Budget, UserBudgetRelation
             WHERE User.userId = :id
@@ -105,7 +105,7 @@ interface UserDao {
             And Budget.budgetId = UserBudgetRelation.budgetId
             ORDER BY Budget.lastEdited DESC"""
     )
-    suspend fun getUsersWithNoteListsById(id : Int) : List<BudgetSummary>
+    suspend fun getUsersWithBudgetListsById(id : Int) : List<BudgetSummary>
 
     // Same query as above but returns PagingSource for pagination
     @Query(
@@ -116,7 +116,7 @@ interface UserDao {
             ORDER BY Budget.lastEdited DESC
         """
     )
-    fun getUsersWithNoteListsByIdPaged(id : Int): PagingSource<Int, BudgetSummary>
+    fun getUsersWithBudgetListsByIdPaged(id : Int): PagingSource<Int, BudgetSummary>
 
     // Insert New User into DB
     @Insert (entity = User::class)
@@ -125,25 +125,25 @@ interface UserDao {
 
 @Dao
 interface BudgetDao {
-    // Query to get Note by noteId
+    // Query to get Budget by budgetId
     @Query("SELECT * FROM budget WHERE budgetId = :id")
     suspend fun getById(id : Int) : Budget
 
-    // Query to get NoteId by its rowId
+    // Query to get BudgetId by its rowId
     @Query("SELECT budgetId FROM Budget WHERE rowid = :rowId")
     suspend fun getByRowId(rowId: Long) : Int
 
-    // Insert or Update a Note
+    // Insert or Update a Budget
     @Upsert(entity = Budget::class)
     suspend fun upsert(budget : Budget): Long
 
-    // Insert a relation between a user and a note
+    // Insert a relation between a user and a budget
     @Insert
     suspend fun insertRelation(userAndBudget: UserBudgetRelation)
 
-    // Insert or update Note and create a relation to the User if Note is new
+    // Insert or update Budget and create a relation to the User if Budget is new
     @Transaction
-    suspend fun upsertNote(budget : Budget, userId: Int) {
+    suspend fun upsertBudget(budget : Budget, userId: Int) {
         val rowId = upsert(budget)
         if (budget.budgetId == 0) {
             val budgetId = getByRowId(rowId)
@@ -151,14 +151,14 @@ interface BudgetDao {
         }
     }
 
-    // Query to count the number of notes a user has
+    // Query to count the number of budgets a user has
     @Query(
         """SELECT COUNT(*) FROM User, Budget, UserBudgetRelation
             WHERE User.userId = :userId
             AND UserBudgetRelation.userId = User.userId
             AND Budget.budgetId = UserBudgetRelation.budgetId"""
     )
-    suspend fun userNoteCount(userId : Int) : Int
+    suspend fun userBudgetCount(userId : Int) : Int
 }
 
 @Dao
@@ -167,29 +167,31 @@ interface DeleteDao {
     @Query("DELETE FROM user WHERE userId = :userId")
     suspend fun deleteUser(userId : Int)
 
-    // Query to get all note IDs related to a user
+    // Query to get all budget IDs related to a user
     @Query(
         """SELECT Budget.budgetId FROM User, Budget, UserBudgetRelation
             WHERE User.userid = :userId
             AND UserBudgetRelation.userId = User.userId
             AND UserBudgetRelation.budgetId = Budget.budgetId"""
     )
-    suspend fun getAllNoteIdsByUser(userId : Int) : List<Int>
+    suspend fun getAllBudgetIdsByUser(userId : Int) : List<Int>
 
-    // Delete notes by IDs
+    // Delete budgets by IDs
     @Query("DELETE FROM budget WHERE budgetId IN (:budgetIds)")
-    suspend fun deleteNotes(budgetIds : List<Int>)
+    suspend fun deleteBudgets(budgetIds : List<Int>)
 
+    // Delete all users (Clear for testing)
     @Query("DELETE FROM user")
     suspend fun deleteAllUsers()
 
+    // Delete all budgets
     @Query("DELETE FROM budget")
-    suspend fun deleteAllNotes()
+    suspend fun deleteAllBudgets()
 
-    // Transaction to delete user and all their notes
+    // Transaction to delete user and all their budgets
     @Transaction
     suspend fun delete(userId: Int) {
-        deleteNotes(getAllNoteIdsByUser(userId))
+        deleteBudgets(getAllBudgetIdsByUser(userId))
         deleteUser(userId)
     }
 }
@@ -201,7 +203,7 @@ interface DeleteDao {
 abstract class BudgetDatabase : RoomDatabase() {
     // DAOs to access database
     abstract fun userDao() : UserDao
-    abstract fun noteDao() : BudgetDao
+    abstract fun budgetDao() : BudgetDao
     abstract fun deleteDao() : DeleteDao
 
     companion object {
