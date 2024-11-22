@@ -38,10 +38,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:background="#FFFFFF"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
             android:id="@+id/homeButton"
@@ -49,8 +49,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#000000"
-            android:text="@string/homeButton" />
+            android:text="@string/homeButton"
+            android:textColor="#000000" />
 
         <Button
             android:id="@+id/budgetButton"
@@ -58,8 +58,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#000000"
-            android:text="@string/budgetButton" />
+            android:text="@string/budgetButton"
+            android:textColor="#000000" />
 
         <Button
             android:id="@+id/settingsButton"
@@ -67,8 +67,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#000000"
-            android:text="@string/settingsButton" />
+            android:text="@string/settingsButton"
+            android:textColor="#000000" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
