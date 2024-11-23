@@ -31,6 +31,18 @@ class AddSpendingFragment (
 ) : Fragment() {
     private lateinit var logoutButton: Button
     private lateinit var userViewModel: UserViewModel
+    private lateinit var addSpendingButton: ImageButton
+    private lateinit var categoryView: TextView
+    private lateinit var addSpendingButton2: ImageButton
+    private lateinit var categoryView2: TextView
+    private lateinit var addSpendingButton3: ImageButton
+    private lateinit var categoryView3: TextView
+    private lateinit var addSpendingButton4: ImageButton
+    private lateinit var categoryView4: TextView
+    private lateinit var addSpendingButton5: ImageButton
+    private lateinit var categoryView5: TextView
+    private lateinit var addSpendingButton6: ImageButton
+    private lateinit var categoryView6: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,64 +51,6 @@ class AddSpendingFragment (
         } else {
             ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         }
-
-        val addSpendingButton = view?.findViewById<ImageButton>(R.id.imageButton)
-        val categoryView = view?.findViewById<TextView>(R.id.categoryTextView)
-        val addSpendingButton2 = view?.findViewById<ImageButton>(R.id.imageButton2)
-        val categoryView2 = view?.findViewById<TextView>(R.id.categoryTextView2)
-        val addSpendingButton3 = view?.findViewById<ImageButton>(R.id.imageButton3)
-        val categoryView3 = view?.findViewById<TextView>(R.id.categoryTextView3)
-        val addSpendingButton4 = view?.findViewById<ImageButton>(R.id.imageButton4)
-        val categoryView4 = view?.findViewById<TextView>(R.id.categoryTextView4)
-        val addSpendingButton5 = view?.findViewById<ImageButton>(R.id.imageButton5)
-        val categoryView5 = view?.findViewById<TextView>(R.id.categoryTextView5)
-        val addSpendingButton6 = view?.findViewById<ImageButton>(R.id.imageButton6)
-        val categoryView6 = view?.findViewById<TextView>(R.id.categoryTextView6)
-
-
-
-        if (addSpendingButton != null) {
-            val category = categoryView?.text.toString()
-            addSpendingButton.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
-        if (addSpendingButton2 != null) {
-            val category = categoryView2?.text.toString()
-            addSpendingButton2.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
-        if (addSpendingButton3 != null) {
-            val category = categoryView3?.text.toString()
-            addSpendingButton3.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
-        if (addSpendingButton4 != null) {
-            val category = categoryView4?.text.toString()
-            addSpendingButton4.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
-        if (addSpendingButton5 != null) {
-            val category = categoryView5?.text.toString()
-            addSpendingButton5.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
-        if (addSpendingButton6 != null) {
-            val category = categoryView6?.text.toString()
-            addSpendingButton6.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
     }
 
     override fun onCreateView(
@@ -105,6 +59,20 @@ class AddSpendingFragment (
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_spending, container, false)
         logoutButton = view.findViewById(R.id.test_logout)
+
+        // For Adding button
+        addSpendingButton = view.findViewById<ImageButton>(R.id.imageButton)
+        categoryView = view.findViewById<TextView>(R.id.categoryTextView)
+        addSpendingButton2 = view.findViewById<ImageButton>(R.id.imageButton2)
+        categoryView2 = view.findViewById<TextView>(R.id.categoryTextView2)
+        addSpendingButton3 = view.findViewById<ImageButton>(R.id.imageButton3)
+        categoryView3 = view.findViewById<TextView>(R.id.categoryTextView3)
+        addSpendingButton4 = view.findViewById<ImageButton>(R.id.imageButton4)
+        categoryView4 = view.findViewById<TextView>(R.id.categoryTextView4)
+        addSpendingButton5 = view.findViewById<ImageButton>(R.id.imageButton5)
+        categoryView5 = view.findViewById<TextView>(R.id.categoryTextView5)
+        addSpendingButton6 = view.findViewById<ImageButton>(R.id.imageButton6)
+        categoryView6 = view.findViewById<TextView>(R.id.categoryTextView6)
 
         // Inflate the layout for this fragment
         return view
@@ -118,6 +86,31 @@ class AddSpendingFragment (
                 Navigation.findNavController(view)
                     .navigate(R.id.action_addSpendingFragment_to_loginFragment)
             }
+        }
+        var category = categoryView.text.toString()
+        addSpendingButton.setOnClickListener {
+            Log.d("Dialog1", "Button clicked")
+            showDialog(category)
+        }
+        category = categoryView2.text.toString()
+        addSpendingButton2.setOnClickListener {
+            showDialog(category)
+        }
+        category = categoryView3.text.toString()
+        addSpendingButton3.setOnClickListener {
+            showDialog(category)
+        }
+        category = categoryView4.text.toString()
+        addSpendingButton4.setOnClickListener {
+            showDialog(category)
+        }
+        category = categoryView5.text.toString()
+        addSpendingButton5.setOnClickListener {
+            showDialog(category)
+        }
+        category = categoryView6.text.toString()
+        addSpendingButton6.setOnClickListener {
+            showDialog(category)
         }
     }
 
@@ -136,6 +129,7 @@ class AddSpendingFragment (
             .setNegativeButton("Cancel") {dialog,_ ->
                 dialog.dismiss()
             }
-
+            .create()
+            .show()
     }
 }

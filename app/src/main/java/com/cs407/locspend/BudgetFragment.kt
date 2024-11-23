@@ -12,8 +12,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.cs407.locspend.data.Budget
 import com.cs407.locspend.data.BudgetDatabase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * A simple [Fragment] subclass.
@@ -50,8 +53,12 @@ class BudgetFragment (
                     budgetDB.budgetDao().upsertBudget(
                         Budget(
                             budgetCategory = category,
-                            budgetAmount = 0,
-                            budgetSpent = 0
+                            budgetAmount = 0.0,
+                            budgetSpent = 0.0,
+                            budgetId = TODO(),
+                            budgetDetail = TODO(),
+                            budgetPath = TODO(),
+                            lastEdited = TODO()
                         ), userState.id
                     )
                 }
@@ -126,9 +133,13 @@ class BudgetFragment (
             if (spent != null) {
                 spent = spent + amount
                 budgetDB.budgetDao().upsertBudget(Budget(
-                    budgetCategory = category,
+                    budgetCategory = category.toString(),
                     budgetAmount = total_budget,
-                    budgetSpent = spent
+                    budgetSpent = spent,
+                    budgetId = TODO(),
+                    budgetDetail = TODO(),
+                    budgetPath = TODO(),
+                    lastEdited = TODO()
                 ), userState.id
                 )
             }
@@ -162,7 +173,11 @@ class BudgetFragment (
             .setView(input)
             .setPositiveButton("Ok") {dialog,_ ->
                 val userInput = input.text.toString()
-                addSpending(categoryView, userInput.toInt())
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        addSpending(categoryView, userInput.toInt())
+                    }
+                }
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel") {dialog,_ ->
@@ -199,25 +214,6 @@ class BudgetFragment (
         budgetPercentageText.text = newPercentage.toString()
 
 
-    }
-
-    private fun loadBudgets() {
-        val userState = userViewModel.userState.value
-        val userId = userState.id
-
-        if (userId == 0) {
-            Log.e("NoteListFragment", "Invalid user ID")
-            return
-        }
-        val pager = Pager(
-            config = PagingConfig(pageSize = 20, prefetchDistance = 5),
-            pagingSourceFactory = { noteDB.userDao().getUsersWithNoteListsByIdPaged(userId) }
-        )
-        lifecycleScope.launch {
-            pager.flow.cachedIn(lifecycleScope).collectLatest { pagingData ->
-                adapter.submitData(pagingData)
-            }
-        }
     }
 }
 
