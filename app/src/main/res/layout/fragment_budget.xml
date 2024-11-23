@@ -111,7 +111,22 @@
                     layout="@layout/budget_table" />
 
                 <include
-                    android:id="@id/budget_table_groceries"
+                    android:id="@+id/budget_table_clothing"
+                    layout="@layout/budget_table" />
+
+                <include
+                    android:id="@+id/budget_table_transportation"
+                    layout="@layout/budget_table" />
+
+                <include
+                    android:id="@+id/budget_table_transportation"
+                    layout="@layout/budget_table" />
+
+                <include
+                    android:id="@+id/budget_table_entertainment"
+                    layout="@layout/budget_table" />
+                <include
+                    android:id="@+id/budget_table_miscellaneous"
                     layout="@layout/budget_table" />
 
             </LinearLayout>

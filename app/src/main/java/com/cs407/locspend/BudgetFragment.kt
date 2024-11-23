@@ -11,8 +11,6 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import com.cs407.locspend.data.Budget
 import com.cs407.locspend.data.BudgetDatabase
 import com.cs407.locspend.data.User
@@ -34,6 +32,7 @@ class BudgetFragment (
     lateinit var totalSpentText : TextView
     lateinit var totalRemainingText : TextView
     lateinit var budgetPercentageText : TextView
+    lateinit var monthPercentageText : TextView
     private lateinit var userViewModel: UserViewModel
     private lateinit var budgetDB : BudgetDatabase
     private lateinit var categories : List<String>
@@ -86,35 +85,152 @@ class BudgetFragment (
         // Find each included layout by its unique ID
         val budgetItemDining = view.findViewById<View>(R.id.budget_table_dining)
         val budgetItemGroceries = view.findViewById<View>(R.id.budget_table_groceries)
+        val budgetItemClothing = view.findViewById<View>(R.id.budget_table_clothing)
+        val budgetItemTransportation = view.findViewById<View>(R.id.budget_table_transportation)
+        val budgetItemEntertainment = view.findViewById<View>(R.id.budget_table_entertainment)
+        val budgetItemMiscellaneous = view.findViewById<View>(R.id.budget_table_miscellaneous)
 
         // Total budget/spent text views
         totalBudgetText = view.findViewById<TextView>(R.id.total_budget)
         totalSpentText = view.findViewById<TextView>(R.id.total_spent)
         budgetPercentageText = view.findViewById<TextView>(R.id.percent_budget)
         totalRemainingText = view.findViewById<TextView>(R.id.total_remaining)
+        monthPercentageText = view.findViewById<TextView>(R.id.percent_month)
+
+        var categoryBudget = 0.0
+        var budgetSpent = 0.0
+        var remaining = 0.0
 
         // Set values for "Dining" budget item
+        lifecycleScope.launch{
+
+            val budget = budgetDB.budgetDao().getByCategory("Dining")
+            categoryBudget = budget.budgetAmount
+            budgetSpent = budget.budgetSpent
+            remaining = categoryBudget - budgetSpent
+
+        }
+
         budgetItemDining.findViewById<TextView>(R.id.category).text = "Dining"
-        budgetItemDining.findViewById<TextView>(R.id.budget_value).text = "$125.00"
-        budgetItemDining.findViewById<TextView>(R.id.spent_value).text = "$45.00"
-        budgetItemDining.findViewById<TextView>(R.id.remaining_value).text = "$80.00"
+        budgetItemDining.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
+        budgetItemDining.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
+        budgetItemDining.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
 
         // Set values for "Groceries" budget item
-        budgetItemGroceries.findViewById<TextView>(R.id.category).text = "Groceries"
-        budgetItemGroceries.findViewById<TextView>(R.id.budget_value).text = "$300.00"
-        budgetItemGroceries.findViewById<TextView>(R.id.spent_value).text = "$150.00"
-        budgetItemGroceries.findViewById<TextView>(R.id.remaining_value).text = "$150.00"
+        lifecycleScope.launch{
 
+            val budget = budgetDB.budgetDao().getByCategory("Groceries")
+            categoryBudget = budget.budgetAmount
+            budgetSpent = budget.budgetSpent
+            remaining = categoryBudget - budgetSpent
+
+        }
+
+        budgetItemGroceries.findViewById<TextView>(R.id.category).text = "Groceries"
+        budgetItemGroceries.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
+        budgetItemGroceries.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
+        budgetItemGroceries.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
+
+        // Set values for "Clothing" budget item
+        lifecycleScope.launch{
+
+            val budget = budgetDB.budgetDao().getByCategory("Clothing")
+            categoryBudget = budget.budgetAmount
+            budgetSpent = budget.budgetSpent
+            remaining = categoryBudget - budgetSpent
+
+        }
+
+        budgetItemClothing.findViewById<TextView>(R.id.category).text = "Clothing"
+        budgetItemClothing.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
+        budgetItemClothing.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
+        budgetItemClothing.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
+
+        //Set values for "Transportation" budget item
+        lifecycleScope.launch{
+
+            val budget = budgetDB.budgetDao().getByCategory("Transportation")
+            categoryBudget = budget.budgetAmount
+            budgetSpent = budget.budgetSpent
+            remaining = categoryBudget - budgetSpent
+
+        }
+
+        budgetItemTransportation.findViewById<TextView>(R.id.category).text = "Transportation"
+        budgetItemTransportation.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
+        budgetItemTransportation.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
+        budgetItemTransportation.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
+
+        // Set values for "Entertainment" budget item
+        lifecycleScope.launch{
+
+            val budget = budgetDB.budgetDao().getByCategory("Entertainment")
+            categoryBudget = budget.budgetAmount
+            budgetSpent = budget.budgetSpent
+            remaining = categoryBudget - budgetSpent
+
+        }
+
+        budgetItemEntertainment.findViewById<TextView>(R.id.category).text = "Entertainment"
+        budgetItemEntertainment.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
+        budgetItemEntertainment.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
+        budgetItemEntertainment.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
+
+        // Set values for "Miscellaneous" budget item
+        lifecycleScope.launch{
+
+            val budget = budgetDB.budgetDao().getByCategory("Miscellaneous")
+            categoryBudget = budget.budgetAmount
+            budgetSpent = budget.budgetSpent
+            remaining = categoryBudget - budgetSpent
+
+        }
+
+        budgetItemMiscellaneous.findViewById<TextView>(R.id.category).text = "Miscellaneous"
+        budgetItemMiscellaneous.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
+        budgetItemMiscellaneous.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
+        budgetItemMiscellaneous.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
+
+        // Update the total budget information at the top
+        lifecycleScope.launch{
+            updateTotalBudget()
+        }
 
         // Create onClickListener for the add spending button on each category
-        val categoryView = budgetItemDining
-        val addButton = categoryView.findViewById<TextView>(R.id.category)
+        val addButton = budgetItemDining.findViewById<TextView>(R.id.add_button)
         addButton.setOnClickListener {
-            showDialog(categoryView)
+            showDialog(budgetItemDining)
         }
+
+
+        val addButton1 = budgetItemGroceries.findViewById<TextView>(R.id.add_button)
+        addButton1.setOnClickListener {
+            showDialog(budgetItemGroceries)
+        }
+
+        val addButton2 = budgetItemClothing.findViewById<TextView>(R.id.add_button)
+        addButton2.setOnClickListener {
+            showDialog(budgetItemClothing)
+        }
+
+        val addButton3 = budgetItemTransportation.findViewById<TextView>(R.id.add_button)
+        addButton3.setOnClickListener {
+            showDialog(budgetItemTransportation)
+        }
+
+        val addButton4 = budgetItemEntertainment.findViewById<TextView>(R.id.add_button)
+        addButton4.setOnClickListener {
+            showDialog(budgetItemEntertainment)
+        }
+
+        val addButton5 = budgetItemMiscellaneous.findViewById<TextView>(R.id.add_button)
+        addButton5.setOnClickListener {
+            showDialog(budgetItemMiscellaneous)
+        }
+
     }
 
-    private suspend fun addSpending(
+    private suspend fun addSpendingToBudgetTable(
         budgetTable: View,
         amount: Int
     ) {
@@ -161,14 +277,6 @@ class BudgetFragment (
 
     }
 
-    fun stringToInt(input: String): Int? {
-        return try {
-            input.toInt()
-        } catch (e: NumberFormatException) {
-            null // Return null if the string cannot be converted
-        }
-    }
-
     private fun showDialog(categoryView : View) {
         val input = EditText(requireContext())
         input.hint = "$0.00"
@@ -179,7 +287,7 @@ class BudgetFragment (
                 val userInput = input.text.toString()
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
-                        addSpending(categoryView, userInput.toInt())
+                        addSpendingToBudgetTable(categoryView, userInput.toInt())
                     }
                 }
                 dialog.dismiss()
@@ -187,6 +295,8 @@ class BudgetFragment (
             .setNegativeButton("Cancel") {dialog,_ ->
                 dialog.dismiss()
             }
+            .show()
+            .create()
     }
 
     private suspend fun updateTotalBudget(){
@@ -212,9 +322,17 @@ class BudgetFragment (
         }
         newRemaining = totalBudget - totalSpent
 
+        //get percentage through the month
+        val calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val total_days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        var monthPercentage = ((total_days - day)/total_days) * 100
+
+
         totalRemainingText.text = newRemaining.toString()
         totalSpentText.text = totalSpent.toString()
         budgetPercentageText.text = newPercentage.toString()
+        monthPercentageText.text = monthPercentage.toString()
     }
 }
 
