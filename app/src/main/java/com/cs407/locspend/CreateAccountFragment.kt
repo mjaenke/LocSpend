@@ -13,6 +13,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.cs407.locspend.data.BudgetDatabase
 import com.cs407.locspend.data.User
@@ -29,7 +30,9 @@ import androidx.navigation.Navigation
  * Use the [CreateAccountFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CreateAccountFragment : Fragment() {
+class CreateAccountFragment (
+    private val injectedUserViewModel: UserViewModel? = null // For testing only
+) : Fragment() {
     private lateinit var usernameEditText : EditText
     private lateinit var passwordEditText : EditText
     private lateinit var numberEditText : EditText
@@ -37,9 +40,11 @@ class CreateAccountFragment : Fragment() {
     private lateinit var getStartedButton : Button
     private lateinit var termsAndServicesCheckBox : CheckBox
     private lateinit var errorText : TextView
+    private lateinit var userViewModel: UserViewModel
 
     private lateinit var userPasswdKV: SharedPreferences
     private lateinit var budgetDB: BudgetDatabase
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,6 +59,12 @@ class CreateAccountFragment : Fragment() {
         getStartedButton = view.findViewById(R.id.getStartedButton)
         termsAndServicesCheckBox = view.findViewById(R.id.termsAndServicesCheckBox)
         errorText = view.findViewById(R.id.errorTextView)
+
+        userViewModel = if (injectedUserViewModel != null) {
+            injectedUserViewModel
+        } else {
+            ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+        }
 
         userPasswdKV = requireContext().getSharedPreferences(getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
         budgetDB =  BudgetDatabase.getDatabase(requireContext())
@@ -94,8 +105,18 @@ class CreateAccountFragment : Fragment() {
                 val createSuccess = withContext(Dispatchers.IO){
                     createAccount(userName, password)
                 }
+                val userId = withContext(Dispatchers.IO) {
+                    budgetDB.userDao().getByName(userName).userId
+                }
                 if (createSuccess) {
                     // navigate to another fragment after successful signup
+                    userViewModel.setUser(
+                        UserState(
+                            id = userId,
+                            name = userName,
+                            passwd = password
+                        )
+                    )
                     Log.d("Navigate", "Navigating to home fragment")
                     Navigation.findNavController(view)
                         .navigate(R.id.action_createAccountFragment_to_homeFragment)

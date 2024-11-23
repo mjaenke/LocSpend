@@ -22,6 +22,16 @@ import android.widget.TextView
 import com.cs407.locspend.data.BudgetDatabase
 import java.util.Calendar
 
+/*
+User maps to Budgets
+When user creates budget
+    -add
+        - budget category to user
+            - add budget to category
+            - have a spent amount for category
+For every budget create budget table
+    - create and display budget table on budget frag
+ */
 
 /**
  * A simple [Fragment] subclass.

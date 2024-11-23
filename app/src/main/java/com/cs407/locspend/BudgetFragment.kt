@@ -2,6 +2,7 @@ package com.cs407.locspend
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.cs407.locspend.data.Budget
 import com.cs407.locspend.data.BudgetDatabase
+import com.cs407.locspend.data.User
+import com.cs407.locspend.data.UserBudgetRelation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,20 +50,22 @@ class BudgetFragment (
             arrayOf("Dining", "Grocery", "Clothing","Transportation","Entertainment","Miscellaneous").toList()
         val userState = userViewModel.userState.value
         lifecycleScope.launch {
-            val countBudget = budgetDB.budgetDao().userBudgetCount(userState.id)
+            var countBudget = budgetDB.budgetDao().userBudgetCount(userState.id)
             if (countBudget == 0) {
-                for (category in categories){
-                    budgetDB.budgetDao().upsertBudget(
-                        Budget(
-                            budgetCategory = category,
-                            budgetAmount = 0.0,
-                            budgetSpent = 0.0,
-                            budgetId = 1,
-                            budgetDetail = "",
-                            budgetPath = "",
-                            lastEdited = Calendar.getInstance().time
-                        ), userState.id
+                for (i in categories.indices){
+                    val newBudget = Budget(
+                        budgetCategory = categories[i],
+                        budgetAmount = 0.0,
+                        budgetSpent = 0.0,
+                        budgetId = 0,
+                        budgetDetail = "",
+                        budgetPath = "",
+                        lastEdited = Calendar.getInstance().time
                     )
+                    val newRowId = budgetDB.budgetDao().upsert(newBudget)
+                    val newBudgetId = budgetDB.budgetDao().getByRowId(newRowId)
+                    budgetDB.budgetDao().insertRelation(UserBudgetRelation(userState.id, newBudgetId))
+
                 }
             }
         }
