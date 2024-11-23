@@ -59,11 +59,6 @@ class SettingsFragment : Fragment() {
         val isDarkModeEnabled = sharedPreferences.getBoolean("dark_mode", false)
         darkModeSwitch.isChecked = isDarkModeEnabled
 
-        // Apply the theme
-        AppCompatDelegate.setDefaultNightMode(
-            if (isDarkModeEnabled) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-        )
-
         // Listener for the switch
         darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             // Save the preference
