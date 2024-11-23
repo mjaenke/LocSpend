@@ -9,4 +9,5 @@
     <color name="editTextColor">#FF000000</color>
     <color name="pinkColor">#c9184a</color>
     <color name="greyColor">#6f6866</color>
+    <color name="budgetTextColor">#FFFFFFFF</color>
 </resources>
