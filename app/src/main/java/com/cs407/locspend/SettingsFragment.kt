@@ -1,10 +1,18 @@
 package com.cs407.locspend
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Switch
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,12 +29,19 @@ class SettingsFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var logoutButton: Button
+    private lateinit var userViewModel: UserViewModel
+
+    private lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+        sharedPreferences = requireActivity().getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
     }
 
     override fun onCreateView(
@@ -34,7 +49,39 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+        val view = inflater.inflate(R.layout.fragment_settings, container, false)
+        logoutButton = view.findViewById(R.id.test_logout)
+
+        // Initialize dark mode switch
+        val darkModeSwitch: Switch = view.findViewById(R.id.darkModeSwitch)
+
+        // Set the switch state based on saved preferences
+        val isDarkModeEnabled = sharedPreferences.getBoolean("dark_mode", false)
+        darkModeSwitch.isChecked = isDarkModeEnabled
+
+        // Listener for the switch
+        darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            // Save the preference
+            sharedPreferences.edit().putBoolean("dark_mode", isChecked).apply()
+
+            // Apply the theme
+            AppCompatDelegate.setDefaultNightMode(
+                if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            )
+        }
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        logoutButton.setOnClickListener {
+            // navigate to another fragment after successful logout
+//            userViewModel.setUser(UserState())
+            lifecycleScope.launch {
+                Navigation.findNavController(view)
+                    .navigate(R.id.action_settingsFragment_to_loginFragment)
+            }
+        }
     }
 
     companion object {

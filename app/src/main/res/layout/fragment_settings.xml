@@ -18,6 +18,7 @@
             android:layout_marginTop="85dp"
             android:gravity="center_horizontal"
             android:text="@string/settingsString"
+            android:textColor="@color/textColor"
             android:textSize="35sp" />
 
         <TextView
@@ -27,6 +28,7 @@
             android:layout_marginTop="28dp"
             android:gravity="center_horizontal"
             android:text="@string/defaultBudgetString"
+            android:textColor="@color/textColor"
             android:textSize="25sp" />
 
         <LinearLayout
@@ -41,6 +43,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/diningString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -48,6 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
+                android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
 
@@ -66,6 +70,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/groceryString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -73,6 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
+                android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
                 android:inputType="number" />
@@ -90,6 +96,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/clothingString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -97,6 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
+                android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
                 android:inputType="number" />
@@ -114,6 +122,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/transportationString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -121,6 +130,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
+                android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
 
@@ -139,6 +149,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/entertainmentString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -146,6 +157,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
+                android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
                 android:inputType="number" />
@@ -163,6 +175,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/miscString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -170,6 +183,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
+                android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
                 android:inputType="number" />
@@ -178,9 +192,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="40dp"
             android:orientation="horizontal"
-            android:background="#D9D9D9"
+            android:background="@color/greyColor"
             >
 
             <ImageView
@@ -196,6 +210,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/darkModeString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
@@ -207,7 +222,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="#D9D9D9">
+            android:background="@color/greyColor">
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -222,12 +237,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/notificationString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="120dp"
                 android:layout_marginLeft="10dp" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/test_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/darkGrey"
+            android:text="Logout"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/notificationSwitch" />
 
     </LinearLayout>
 

@@ -120,6 +120,7 @@ class BudgetFragment (
         // Set values for "Groceries" budget item
         lifecycleScope.launch{
 
+
             val budget = budgetDB.budgetDao().getByCategory("Grocery")
             categoryBudget = budget.budgetAmount
             budgetSpent = budget.budgetSpent
