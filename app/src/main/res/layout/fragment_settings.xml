@@ -18,6 +18,7 @@
             android:layout_marginTop="85dp"
             android:gravity="center_horizontal"
             android:text="@string/settingsString"
+            android:textColor="@color/textColor"
             android:textSize="35sp" />
 
         <TextView
@@ -27,6 +28,7 @@
             android:layout_marginTop="28dp"
             android:gravity="center_horizontal"
             android:text="@string/defaultBudgetString"
+            android:textColor="@color/textColor"
             android:textSize="25sp" />
 
         <LinearLayout
@@ -41,6 +43,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/diningString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -66,6 +69,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/groceryString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -90,6 +94,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/clothingString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -114,6 +119,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/transportationString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -139,6 +145,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/entertainmentString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -163,6 +170,7 @@
                 android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:text="@string/miscString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -196,6 +204,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/darkModeString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
@@ -222,6 +231,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/notificationString"
+                android:textColor="@color/textColor"
                 android:textSize="20sp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"

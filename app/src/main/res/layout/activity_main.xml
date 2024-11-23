@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@color/backgroundColor"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -20,7 +20,7 @@
             android:gravity="center_horizontal"
             android:text="@string/header"
             android:textAlignment="center"
-            android:background="#EE4E4E"
+            android:background="@color/locSpendColor"
             android:textColor="#ffffff"
             android:fontFamily="monospace"
             android:textSize="34sp" />

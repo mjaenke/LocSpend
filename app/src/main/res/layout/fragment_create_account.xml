@@ -13,6 +13,7 @@
         android:layout_marginTop="55dp"
         android:text="@string/create_account"
         android:textSize="24sp"
+        android:textColor="@color/textColor"
         app:layout_constraintBottom_toTopOf="@id/usernameTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,6 +27,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="55dp"
         android:text="@string/username_text"
+        android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="@id/usernameEditText"
         app:layout_constraintTop_toTopOf="@id/createAccount" />
 
@@ -48,6 +50,7 @@
         android:layout_margin="16dp"
         android:layout_marginTop="12dp"
         android:text="@string/password_text"
+        android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="@id/passwordEditText"
         app:layout_constraintTop_toBottomOf="@id/usernameEditText"
         tools:layout_editor_absoluteX="15dp" />
@@ -71,6 +74,7 @@
         android:layout_margin="16dp"
         android:layout_marginTop="24dp"
         android:text="@string/number_text"
+        android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="@id/numberEditText"
         app:layout_constraintTop_toBottomOf="@id/passwordEditText"
         tools:layout_editor_absoluteX="15dp" />
@@ -95,6 +99,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="40dp"
         android:text="@string/email_text"
+        android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="@id/emailEditText"
         app:layout_constraintTop_toBottomOf="@id/numberEditText" />
 
@@ -117,6 +122,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="39dp"
         android:text="@string/terms_and_services"
+        android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
 

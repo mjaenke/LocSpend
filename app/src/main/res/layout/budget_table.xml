@@ -6,7 +6,7 @@
     android:layout_height="207dp"
     android:layout_gravity="center_horizontal"
     android:layout_marginTop="20dp"
-    android:background="#FF4747"
+    android:background="@color/locSpendColor"
     android:padding="10dp">
 
     <!-- Plus Icon Button -->
