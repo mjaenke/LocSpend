@@ -54,6 +54,7 @@ data class Budget (
     @PrimaryKey(autoGenerate = true) val budgetId : Int = 0,
     val budgetCategory: String,
     val budgetAmount: Double,
+    val budgetSpent: Double,
 
     @ColumnInfo(typeAffinity = ColumnInfo.TEXT) val budgetDetail : String?,
     val budgetPath : String?,
@@ -128,6 +129,10 @@ interface BudgetDao {
     // Query to get Budget by budgetId
     @Query("SELECT * FROM budget WHERE budgetId = :id")
     suspend fun getById(id : Int) : Budget
+
+    // Query to get Budget by category
+    @Query("SELECT * FROM budget WHERE category = :category")
+    suspend fun getByCategory(category : String) : Budget
 
     // Query to get BudgetId by its rowId
     @Query("SELECT budgetId FROM Budget WHERE rowid = :rowId")
