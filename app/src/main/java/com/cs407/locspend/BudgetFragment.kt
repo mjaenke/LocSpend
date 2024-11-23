@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.cs407.locspend.data.Budget
 import com.cs407.locspend.data.BudgetDatabase
 import kotlinx.coroutines.launch
 
@@ -51,7 +52,11 @@ class BudgetFragment (
                         Budget(
                             budgetCategory = category,
                             budgetAmount = 0,
-                            budgetSpent = 0
+                            budgetSpent = 0,
+                            budgetId = categories.indexOf(category),
+                            budgetDetail = TODO(),
+                            budgetPath = TODO(),
+                            lastEdited = TODO(),
                         ), userState.id
                     )
                 }
