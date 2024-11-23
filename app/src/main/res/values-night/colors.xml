@@ -3,10 +3,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="darkGrey">#A9A9A9</color>
-    <color name="backgroundColor">#FFFFFF</color>
-    <color name="textColor">#FF000000</color>
-    <color name="locSpendColor">#FF4747</color>
+    <color name="backgroundColor">#1E1E24</color>
+    <color name="textColor">#FFFFFFFF</color>
+    <color name="locSpendColor">#870022</color>
     <color name="editTextColor">#FF000000</color>
-    <color name="pinkColor">#FEC2C2</color>
-    <color name="greyColor">#D9D9D9</color>
+    <color name="pinkColor">#c9184a</color>
+    <color name="greyColor">#6f6866</color>
 </resources>

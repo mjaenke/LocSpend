@@ -3,5 +3,15 @@
     <style name="Base.Theme.LocSpend" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/darkGrey</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/darkGrey</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="backgroundColor">@color/darkGrey</item>
+        <item name="background">@color/darkGrey</item>
     </style>
+
+    <style name="ScreenBackground"><item name="android:background">@color/darkGrey</item></style>
+    <style name="TextColor"><item name="android:textColor">@color/white</item></style>
+
 </resources>

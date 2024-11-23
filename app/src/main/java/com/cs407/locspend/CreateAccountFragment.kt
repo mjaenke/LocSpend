@@ -41,6 +41,7 @@ class CreateAccountFragment (
     private lateinit var termsAndServicesCheckBox : CheckBox
     private lateinit var errorText : TextView
     private lateinit var userViewModel: UserViewModel
+    private lateinit var cancelCreate : TextView
 
     private lateinit var userPasswdKV: SharedPreferences
     private lateinit var budgetDB: BudgetDatabase
@@ -59,6 +60,7 @@ class CreateAccountFragment (
         getStartedButton = view.findViewById(R.id.getStartedButton)
         termsAndServicesCheckBox = view.findViewById(R.id.termsAndServicesCheckBox)
         errorText = view.findViewById(R.id.errorTextView)
+        cancelCreate = view.findViewById(R.id.cancelCreate)
 
         userViewModel = if (injectedUserViewModel != null) {
             injectedUserViewModel
@@ -124,7 +126,10 @@ class CreateAccountFragment (
                     errorText.visibility = View.VISIBLE
                 }
             }
+        }
 
+        cancelCreate.setOnClickListener {
+            Navigation.findNavController(view).navigate(R.id.action_createAccountFragment_to_loginFragment)
         }
     }
 

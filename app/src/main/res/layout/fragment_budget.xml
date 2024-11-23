@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical" >
 
         <TextView
             android:id="@+id/date"
@@ -18,6 +18,7 @@
             android:layout_marginTop="40dp"
             android:gravity="center"
             android:text="@string/date"
+            android:textColor="@color/textColor"
             android:textSize="35sp" />
 
         <TextView
@@ -27,6 +28,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="30dp"
             android:text="@string/total_budget"
+            android:textColor="@color/textColor"
             android:textSize="20sp" />
 
         <TextView
@@ -36,6 +38,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:text="@string/total_spent"
+            android:textColor="@color/textColor"
             android:textSize="20sp" />
 
         <TextView
@@ -45,6 +48,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:text="@string/total_remaining"
+            android:textColor="@color/textColor"
             android:textSize="20sp" />
 
         <LinearLayout
@@ -59,6 +63,7 @@
                 android:layout_marginStart="100dp"
                 android:layout_marginTop="20dp"
                 android:text="@string/percent_budget"
+                android:textColor="@color/textColor"
                 android:textSize="35sp" />
 
             <TextView
@@ -68,6 +73,7 @@
                 android:layout_marginStart="100dp"
                 android:layout_marginTop="20dp"
                 android:text="@string/percent_budget"
+                android:textColor="@color/textColor"
                 android:textSize="35sp" />
         </LinearLayout>
 
@@ -82,6 +88,7 @@
                 android:layout_height="36dp"
                 android:layout_marginStart="100dp"
                 android:gravity="center"
+                android:textColor="@color/textColor"
                 android:text="@string/through_budget" />
 
             <TextView
@@ -90,6 +97,7 @@
                 android:layout_height="36dp"
                 android:layout_marginStart="100dp"
                 android:gravity="center"
+                android:textColor="@color/textColor"
                 android:text="@string/through_month" />
         </LinearLayout>
 
