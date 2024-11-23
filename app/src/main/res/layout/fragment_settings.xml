@@ -229,6 +229,12 @@
                 android:layout_marginLeft="10dp" />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/test_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Logout" />
+
     </LinearLayout>
 
 </FrameLayout>

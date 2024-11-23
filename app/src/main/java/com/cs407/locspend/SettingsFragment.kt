@@ -5,6 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,6 +25,9 @@ class SettingsFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var logoutButton: Button
+    private lateinit var userViewModel: UserViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -34,7 +41,21 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+        val view = inflater.inflate(R.layout.fragment_settings, container, false)
+        logoutButton = view.findViewById(R.id.test_logout)
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        logoutButton.setOnClickListener {
+            // navigate to another fragment after successful logout
+//            userViewModel.setUser(UserState())
+            lifecycleScope.launch {
+                Navigation.findNavController(view)
+                    .navigate(R.id.action_settingsFragment_to_loginFragment)
+            }
+        }
     }
 
     companion object {

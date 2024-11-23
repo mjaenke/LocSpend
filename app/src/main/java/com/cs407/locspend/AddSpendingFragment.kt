@@ -29,7 +29,6 @@ import android.widget.TextView
 class AddSpendingFragment (
     private val injectedUserViewModel: UserViewModel? = null
 ) : Fragment() {
-    private lateinit var logoutButton: Button
     private lateinit var userViewModel: UserViewModel
     private lateinit var addSpendingButton: ImageButton
     private lateinit var categoryView: TextView
@@ -58,7 +57,6 @@ class AddSpendingFragment (
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_spending, container, false)
-        logoutButton = view.findViewById(R.id.test_logout)
 
         // For Adding button
         addSpendingButton = view.findViewById<ImageButton>(R.id.imageButton)
@@ -79,14 +77,6 @@ class AddSpendingFragment (
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        logoutButton.setOnClickListener {
-            // navigate to another fragment after successful logout
-            userViewModel.setUser(UserState())
-            lifecycleScope.launch {
-                Navigation.findNavController(view)
-                    .navigate(R.id.action_addSpendingFragment_to_loginFragment)
-            }
-        }
         var category = categoryView.text.toString()
         addSpendingButton.setOnClickListener {
             Log.d("Dialog1", "Button clicked")
