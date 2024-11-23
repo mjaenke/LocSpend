@@ -7,14 +7,15 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -22,15 +23,24 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.PlaceLikelihood
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
+import com.google.android.libraries.places.api.net.PlacesClient
+import java.util.Arrays
 import java.util.Locale
 
 
 class HomeFragment : Fragment() {
 
     private lateinit var addressText: TextView
-    private lateinit var client: FusedLocationProviderClient
+    private lateinit var locationClient: FusedLocationProviderClient
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
+    private lateinit var placesClient: PlacesClient
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,10 +54,24 @@ class HomeFragment : Fragment() {
         addressText = view.findViewById(R.id.addr)
 
         // Initialize location client
-        client = LocationServices
+        locationClient = LocationServices
             .getFusedLocationProviderClient(
                 requireActivity()
             )
+
+        // Define a variable to hold the Places API key.
+        val apiKey = BuildConfig.PLACES_API_KEY
+
+        // Log an error if apiKey is not set.
+        if (apiKey.isEmpty() || apiKey == "DEFAULT_API_KEY") {
+            Log.e("Places test", "No api key")
+        }
+
+        // Initialize the SDK
+        Places.initialize(requireContext(), apiKey)
+
+        // Initialize places client
+        placesClient = Places.createClient(requireContext())
 
         locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationListener = LocationListener { location: Location ->
@@ -120,6 +144,7 @@ class HomeFragment : Fragment() {
                     addressText.text = addressString
                 }
             }
+            getPlacesInfo(location)
         }
     }
 
@@ -138,5 +163,31 @@ class HomeFragment : Fragment() {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(destination, 15f))
         // allow zooming on map
         googleMap.uiSettings.isZoomGesturesEnabled = true
+    }
+
+    private fun getPlacesInfo(location:Location) {
+        val placeFields: List<Place.Field> = listOf(Place.Field.NAME)
+        val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
+        if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED) {
+
+            val placeResponse = placesClient.findCurrentPlace(request)
+            placeResponse.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val response = task.result
+                    for (placeLikelihood: PlaceLikelihood in response?.placeLikelihoods ?: emptyList()) {
+                        Log.i("TAG", "Place '${placeLikelihood.place.name}' has likelihood: ${placeLikelihood.likelihood}\"")
+                    }
+
+                } else {
+                    val exception = task.exception
+                    if (exception is ApiException) {
+                        Log.e("TAG", "Place not found: ${exception.statusCode}")
+                    }
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        }
     }
 }
