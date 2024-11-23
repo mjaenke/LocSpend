@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/homeMenu"
+          android:icon="@drawable/ic_home_icon"
+          android:title="@string/homeButton"/>
+
+    <item android:id="@+id/budgetMenu"
+        android:icon="@drawable/ic_menu_icon"
+        android:title="@string/budgetButton"/>
+
+    <item android:id="@+id/settingsMenu"
+        android:icon="@drawable/ic_settings_icon"
+        android:title="@string/settingsButton"/>
+
+</menu>

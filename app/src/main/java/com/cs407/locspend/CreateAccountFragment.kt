@@ -37,6 +37,7 @@ class CreateAccountFragment : Fragment() {
     private lateinit var getStartedButton : Button
     private lateinit var termsAndServicesCheckBox : CheckBox
     private lateinit var errorText : TextView
+    private lateinit var cancelCreate : TextView
 
     private lateinit var userPasswdKV: SharedPreferences
     private lateinit var budgetDB: BudgetDatabase
@@ -54,6 +55,7 @@ class CreateAccountFragment : Fragment() {
         getStartedButton = view.findViewById(R.id.getStartedButton)
         termsAndServicesCheckBox = view.findViewById(R.id.termsAndServicesCheckBox)
         errorText = view.findViewById(R.id.errorTextView)
+        cancelCreate = view.findViewById(R.id.cancelCreate)
 
         userPasswdKV = requireContext().getSharedPreferences(getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
         budgetDB =  BudgetDatabase.getDatabase(requireContext())
@@ -103,7 +105,10 @@ class CreateAccountFragment : Fragment() {
                     errorText.visibility = View.VISIBLE
                 }
             }
+        }
 
+        cancelCreate.setOnClickListener {
+            Navigation.findNavController(view).navigate(R.id.action_createAccountFragment_to_loginFragment)
         }
     }
 

@@ -54,6 +54,7 @@ data class Budget (
     @PrimaryKey(autoGenerate = true) val budgetId : Int = 0,
     val budgetCategory: String,
     val budgetAmount: Double,
+    val budgetSpent: Double,
 
     @ColumnInfo(typeAffinity = ColumnInfo.TEXT) val budgetDetail : String?,
     val budgetPath : String?,
@@ -129,6 +130,10 @@ interface BudgetDao {
     @Query("SELECT * FROM budget WHERE budgetId = :id")
     suspend fun getById(id : Int) : Budget
 
+    // Query to get Budget by category
+    @Query("SELECT * FROM budget WHERE budgetCategory = :category")
+    suspend fun getByCategory(category : String) : Budget
+
     // Query to get BudgetId by its rowId
     @Query("SELECT budgetId FROM Budget WHERE rowid = :rowId")
     suspend fun getByRowId(rowId: Long) : Int
@@ -196,7 +201,7 @@ interface DeleteDao {
     }
 }
 
-@Database(entities = [User::class, Budget::class, UserBudgetRelation::class], version = 2)
+@Database(entities = [User::class, Budget::class, UserBudgetRelation::class], version = 3)
 
 @TypeConverters(Converters::class)
 
@@ -216,7 +221,9 @@ abstract class BudgetDatabase : RoomDatabase() {
                     context.applicationContext,
                     BudgetDatabase::class.java,
                     context.getString(R.string.budget_database),
-                ).build()
+                )
+                    .fallbackToDestructiveMigration() // New DB (for development ONLY)
+                    .build()
                 INSTANCE = instance
                 // return instance
                 instance
