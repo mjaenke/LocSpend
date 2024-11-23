@@ -19,6 +19,8 @@ import kotlinx.coroutines.withContext
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import com.cs407.locspend.data.BudgetDatabase
+import java.util.Calendar
 
 
 /**
@@ -29,6 +31,7 @@ import android.widget.TextView
 class AddSpendingFragment (
     private val injectedUserViewModel: UserViewModel? = null
 ) : Fragment() {
+    private lateinit var budgetDB : BudgetDatabase
     private lateinit var logoutButton: Button
     private lateinit var userViewModel: UserViewModel
     private lateinit var addSpendingButton: ImageButton
@@ -73,6 +76,8 @@ class AddSpendingFragment (
         categoryView5 = view.findViewById<TextView>(R.id.categoryTextView5)
         addSpendingButton6 = view.findViewById<ImageButton>(R.id.imageButton6)
         categoryView6 = view.findViewById<TextView>(R.id.categoryTextView6)
+
+
 
         // Inflate the layout for this fragment
         return view
@@ -123,7 +128,9 @@ class AddSpendingFragment (
             .setPositiveButton("Ok") {dialog,_ ->
                 val userInput = input.text.toString()
                 // needs to change in the database...
-                //addSpending(category, userInput.toInt())
+                lifecycleScope.launch {
+                    addSpending(category, userInput.toDouble())
+                }
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel") {dialog,_ ->
@@ -131,5 +138,37 @@ class AddSpendingFragment (
             }
             .create()
             .show()
+    }
+
+    private suspend fun addSpending(
+        budgetCategory: String,
+        amount: Double
+    ) {
+        val userState = userViewModel.userState.value
+        var total_budget = 0.0
+        var spent = 0.0
+
+        // get the total budget for the category, amount spent, and current remaining
+        lifecycleScope.launch {
+            val budget = budgetDB.budgetDao().getByCategory(budgetCategory.toString())
+            total_budget = budget.budgetAmount
+            spent = budget.budgetSpent
+            var id = budget.budgetId
+
+            if (spent != null) {
+                spent = spent + amount
+                budgetDB.budgetDao().upsertBudget(
+                    Budget(
+                        budgetCategory = budgetCategory.toString(),
+                        budgetAmount = total_budget,
+                        budgetSpent = spent,
+                        budgetId = 1,
+                        budgetDetail = "",
+                        budgetPath = "",
+                        lastEdited = Calendar.getInstance().time
+                    ), userState.id
+                )
+            }
+        }
     }
 }
