@@ -102,7 +102,7 @@ class BudgetFragment (
 
         // Create onClickListener for the add spending button on each category
         val categoryView = budgetItemDining
-        val addButton = categoryView.findViewById<TextView>(R.id.category)
+        val addButton = categoryView.findViewById<TextView>(R.id.add_button)
         addButton.setOnClickListener {
             showDialog(categoryView)
         }
