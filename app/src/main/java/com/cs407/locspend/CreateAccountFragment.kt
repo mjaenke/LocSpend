@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
@@ -19,6 +20,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.security.MessageDigest
+import androidx.navigation.Navigation
+
 
 
 /**
@@ -32,6 +35,7 @@ class CreateAccountFragment : Fragment() {
     private lateinit var numberEditText : EditText
     private lateinit var emailEditText : EditText
     private lateinit var getStartedButton : Button
+    private lateinit var termsAndServicesCheckBox : CheckBox
     private lateinit var errorText : TextView
 
     private lateinit var userPasswdKV: SharedPreferences
@@ -48,6 +52,7 @@ class CreateAccountFragment : Fragment() {
         numberEditText = view.findViewById(R.id.numberEditText)
         emailEditText = view.findViewById(R.id.emailEditText)
         getStartedButton = view.findViewById(R.id.getStartedButton)
+        termsAndServicesCheckBox = view.findViewById(R.id.termsAndServicesCheckBox)
         errorText = view.findViewById(R.id.errorTextView)
 
         userPasswdKV = requireContext().getSharedPreferences(getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
@@ -65,6 +70,19 @@ class CreateAccountFragment : Fragment() {
         passwordEditText.doAfterTextChanged {
             errorText.visibility = View.GONE
         }
+
+        numberEditText.doAfterTextChanged {
+            errorText.visibility = View.GONE
+        }
+
+        emailEditText.doAfterTextChanged {
+            errorText.visibility = View.GONE
+        }
+
+        termsAndServicesCheckBox.setOnClickListener {
+            errorText.visibility = View.GONE
+        }
+
         getStartedButton.setOnClickListener {
             // get the username and password from the EditTexts
             val userName = usernameEditText.text.toString()
@@ -79,7 +97,8 @@ class CreateAccountFragment : Fragment() {
                 if (createSuccess) {
                     // navigate to another fragment after successful signup
                     Log.d("Navigate", "Navigating to home fragment")
-                    //findNavController().navigate(R.id.action_loginFragment_to_HomeFragment)
+                    Navigation.findNavController(view)
+                        .navigate(R.id.action_createAccountFragment_to_homeFragment)
                 } else {
                     errorText.visibility = View.VISIBLE
                 }
@@ -92,6 +111,11 @@ class CreateAccountFragment : Fragment() {
         name: String,
         passwdPlain: String
     ) : Boolean {
+        if (name.isEmpty() || passwdPlain.isEmpty() ||
+            numberEditText.text.isEmpty() || emailEditText.text.isEmpty() || !termsAndServicesCheckBox.isChecked) {
+            Log.d("Empty Fields", "Username/Password/Number/Email cannot be empty")
+            return false
+        }
         val hashedPassword = hash(passwdPlain)
         val userExist = userPasswdKV.contains(name)
         if (!userExist) {

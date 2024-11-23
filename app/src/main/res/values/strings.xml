@@ -63,7 +63,7 @@
     <string name="fail_create">Create Account Failed</string>
 
     <!-- Morgan -->
-    <string name="addr">Memorial Union\n800 Langdon St\nMadison, WI 53706</string>
+    <string name="addr">Please turn location permission on!</string>
     <string name="category">Category: Dining</string>
     <string name="plus">+</string>
     <string name="addSpending">Add spending</string>

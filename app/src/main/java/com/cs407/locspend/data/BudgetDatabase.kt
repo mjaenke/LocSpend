@@ -201,7 +201,7 @@ interface DeleteDao {
     }
 }
 
-@Database(entities = [User::class, Budget::class, UserBudgetRelation::class], version = 1)
+@Database(entities = [User::class, Budget::class, UserBudgetRelation::class], version = 2)
 
 @TypeConverters(Converters::class)
 

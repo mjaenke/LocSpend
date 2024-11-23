@@ -74,7 +74,6 @@ class BudgetFragment (
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         // Find each included layout by its unique ID
         val budgetItemDining = view.findViewById<View>(R.id.budget_table_dining)
         val budgetItemGroceries = view.findViewById<View>(R.id.budget_table_groceries)
@@ -206,6 +205,7 @@ class BudgetFragment (
 
     }
 
+    /*
     private fun loadBudgets() {
         val userState = userViewModel.userState.value
         val userId = userState.id
@@ -224,6 +224,6 @@ class BudgetFragment (
             }
         }
     }
+
+     */
 }
-
-
