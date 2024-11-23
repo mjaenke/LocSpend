@@ -11,10 +11,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -40,6 +43,7 @@ class HomeFragment : Fragment() {
     private lateinit var locationClient: FusedLocationProviderClient
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
+    private lateinit var homeAddButton : Button
     private lateinit var placesClient: PlacesClient
 
     override fun onCreateView(
@@ -93,6 +97,16 @@ class HomeFragment : Fragment() {
 
         // Return view
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        homeAddButton = view.findViewById(R.id.button)
+
+        homeAddButton.setOnClickListener {
+            Navigation.findNavController(view)
+                .navigate(R.id.action_homeFragment_to_addSpendingFragment)
+
+        }
     }
 
     // Request location permission
