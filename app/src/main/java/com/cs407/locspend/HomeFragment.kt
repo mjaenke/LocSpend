@@ -26,20 +26,23 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.model.PlaceLikelihood
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
-import java.util.Arrays
 import java.util.Locale
 
 
 class HomeFragment : Fragment() {
 
     private lateinit var addressText: TextView
+    private lateinit var categoryText: TextView
+    private lateinit var budgetText: TextView
+    private lateinit var spentText: TextView
+    private lateinit var remainingText: TextView
+    private lateinit var summaryText: TextView
+
     private lateinit var locationClient: FusedLocationProviderClient
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
@@ -56,6 +59,11 @@ class HomeFragment : Fragment() {
 
         // Assign variable
         addressText = view.findViewById(R.id.addr)
+        categoryText = view.findViewById(R.id.home_category)
+        budgetText = view.findViewById(R.id.home_budget)
+        spentText = view.findViewById(R.id.home_spent)
+        remainingText = view.findViewById(R.id.home_remaining)
+        summaryText = view.findViewById(R.id.home_summary)
 
         // Initialize location client
         locationClient = LocationServices
@@ -67,12 +75,12 @@ class HomeFragment : Fragment() {
         val apiKey = BuildConfig.PLACES_API_KEY
 
         // Log an error if apiKey is not set.
-        if (apiKey.isEmpty() || apiKey == "DEFAULT_API_KEY") {
+        if (apiKey.isEmpty()) {
             Log.e("Places test", "No api key")
         }
 
         // Initialize the SDK
-        Places.initialize(requireContext(), apiKey)
+        Places.initializeWithNewPlacesApiEnabled(requireContext(), apiKey)
 
         // Initialize places client
         placesClient = Places.createClient(requireContext())
@@ -158,7 +166,7 @@ class HomeFragment : Fragment() {
                     addressText.text = addressString
                 }
             }
-            getPlacesInfo(location)
+            getPlacesInfo()
         }
     }
 
@@ -179,19 +187,40 @@ class HomeFragment : Fragment() {
         googleMap.uiSettings.isZoomGesturesEnabled = true
     }
 
-    private fun getPlacesInfo(location:Location) {
+    private fun getPlacesInfo() {
+        var category: String? = null
+        var name: String? = null
         val placeFields: List<Place.Field> = listOf(Place.Field.NAME)
         val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
         if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) ==
             PackageManager.PERMISSION_GRANTED) {
-
             val placeResponse = placesClient.findCurrentPlace(request)
             placeResponse.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val response = task.result
-                    for (placeLikelihood: PlaceLikelihood in response?.placeLikelihoods ?: emptyList()) {
-                        Log.i("TAG", "Place '${placeLikelihood.place.name}' has likelihood: ${placeLikelihood.likelihood}\"")
+
+                    val place = response.placeLikelihoods.first().place
+
+                    if (place.name != null) {
+                        name = place.name
                     }
+
+                    if (place.primaryType != null) {
+                        Log.i("TAG", "primary type ${place.primaryType}")
+                        category = place.primaryType
+                    } else {
+                        category = "DEFAULT"
+                    }
+
+                    if (name != null) {
+                        addressText.text = buildString {
+                            append("$name\n${addressText.text}")
+                        }
+                    }
+                    if (category != null) {
+                        updateBudgetInfo(getCategory(category!!))
+                    }
+
 
                 } else {
                     val exception = task.exception
@@ -203,5 +232,20 @@ class HomeFragment : Fragment() {
         } else {
             requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
         }
+    }
+
+    private fun getCategory(category: String) : String {
+        // TODO: Connect category to our categories
+        return "DEFAULT"
+    }
+
+    private fun updateBudgetInfo(category: String) {
+        // TODO: Replace numbers with actual values from database
+        categoryText.text = getString(R.string.category, category)
+        budgetText.text = getString(R.string.diningBudget, category, 0)
+        spentText.text = getString(R.string.spent, 0)
+        remainingText.text = getString(R.string.remaining, 0)
+        summaryText.text = getString(R.string.summary, 0, 0)
+
     }
 }

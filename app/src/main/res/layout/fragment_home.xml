@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -34,7 +34,7 @@
         </FrameLayout>
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/home_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/category"
@@ -79,25 +79,25 @@
                 android:padding= "5dp">
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/home_budget"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/diningBudget" />
 
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/home_spent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/spent" />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/home_remaining"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/remaining" />
 
                 <TextView
-                    android:id="@+id/textView6"
+                    android:id="@+id/home_summary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/summary" />

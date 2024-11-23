@@ -64,13 +64,13 @@
 
     <!-- Morgan -->
     <string name="addr">Please turn location permission on!</string>
-    <string name="category">Category: Dining</string>
+    <string name="category">Category: %1$s</string>
     <string name="plus">+</string>
     <string name="addSpending">Add spending</string>
-    <string name="diningBudget">Dining Budget for October: $125</string>
-    <string name="spent">Spent: $45</string>
-    <string name="remaining">Remaining: $80</string>
-    <string name="summary">36% through budget, 50% through month</string>
+    <string name="diningBudget">%1$s Budget for October: \$%2$d</string>
+    <string name="spent">Spent: \$%1$d</string>
+    <string name="remaining">Remaining: \$%1$d</string>
+    <string name="summary">%1$d%% through budget, %2$d%% through month</string>
     <string name="header">LocSpend</string>
     <string name="homeButton">Home</string>
     <string name="budgetButton">Budget</string>
