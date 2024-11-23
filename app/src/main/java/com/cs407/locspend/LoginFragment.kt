@@ -103,7 +103,6 @@ class LoginFragment(
                 errorText.text = "Username/Password cannot be empty"
                 errorText.visibility = View.VISIBLE
             }
-
         }
 
         createAccount.setOnClickListener{

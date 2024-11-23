@@ -1,123 +1,117 @@
 package com.cs407.locspend
 
+import android.content.Context
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.compose.material3.Button
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
  * Use the [AddSpendingFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class AddSpendingFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class AddSpendingFragment (
+    private val injectedUserViewModel: UserViewModel? = null
+) : Fragment() {
+    private lateinit var logoutButton: Button
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var addSpendingButton: ImageButton
+    private lateinit var categoryView: TextView
+    private lateinit var addSpendingButton2: ImageButton
+    private lateinit var categoryView2: TextView
+    private lateinit var addSpendingButton3: ImageButton
+    private lateinit var categoryView3: TextView
+    private lateinit var addSpendingButton4: ImageButton
+    private lateinit var categoryView4: TextView
+    private lateinit var addSpendingButton5: ImageButton
+    private lateinit var categoryView5: TextView
+    private lateinit var addSpendingButton6: ImageButton
+    private lateinit var categoryView6: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+        userViewModel = if (injectedUserViewModel != null) {
+            injectedUserViewModel
+        } else {
+            ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         }
-
-        val addSpendingButton = view?.findViewById<ImageButton>(R.id.imageButton)
-        val categoryView = view?.findViewById<TextView>(R.id.categoryTextView)
-        val addSpendingButton2 = view?.findViewById<ImageButton>(R.id.imageButton2)
-        val categoryView2 = view?.findViewById<TextView>(R.id.categoryTextView2)
-        val addSpendingButton3 = view?.findViewById<ImageButton>(R.id.imageButton3)
-        val categoryView3 = view?.findViewById<TextView>(R.id.categoryTextView3)
-        val addSpendingButton4 = view?.findViewById<ImageButton>(R.id.imageButton4)
-        val categoryView4 = view?.findViewById<TextView>(R.id.categoryTextView4)
-        val addSpendingButton5 = view?.findViewById<ImageButton>(R.id.imageButton5)
-        val categoryView5 = view?.findViewById<TextView>(R.id.categoryTextView5)
-        val addSpendingButton6 = view?.findViewById<ImageButton>(R.id.imageButton6)
-        val categoryView6 = view?.findViewById<TextView>(R.id.categoryTextView6)
-
-
-
-        if (addSpendingButton != null) {
-            val category = categoryView?.text.toString()
-            addSpendingButton.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
-        if (addSpendingButton2 != null) {
-            val category = categoryView2?.text.toString()
-            addSpendingButton2.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
-        if (addSpendingButton3 != null) {
-            val category = categoryView3?.text.toString()
-            addSpendingButton3.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
-        if (addSpendingButton4 != null) {
-            val category = categoryView4?.text.toString()
-            addSpendingButton4.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
-        if (addSpendingButton5 != null) {
-            val category = categoryView5?.text.toString()
-            addSpendingButton5.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
-        if (addSpendingButton6 != null) {
-            val category = categoryView6?.text.toString()
-            addSpendingButton6.setOnClickListener {
-                showDialog(category)
-            }
-        }
-
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val view = inflater.inflate(R.layout.fragment_add_spending, container, false)
+        logoutButton = view.findViewById(R.id.test_logout)
+
+        // For Adding button
+        addSpendingButton = view.findViewById<ImageButton>(R.id.imageButton)
+        categoryView = view.findViewById<TextView>(R.id.categoryTextView)
+        addSpendingButton2 = view.findViewById<ImageButton>(R.id.imageButton2)
+        categoryView2 = view.findViewById<TextView>(R.id.categoryTextView2)
+        addSpendingButton3 = view.findViewById<ImageButton>(R.id.imageButton3)
+        categoryView3 = view.findViewById<TextView>(R.id.categoryTextView3)
+        addSpendingButton4 = view.findViewById<ImageButton>(R.id.imageButton4)
+        categoryView4 = view.findViewById<TextView>(R.id.categoryTextView4)
+        addSpendingButton5 = view.findViewById<ImageButton>(R.id.imageButton5)
+        categoryView5 = view.findViewById<TextView>(R.id.categoryTextView5)
+        addSpendingButton6 = view.findViewById<ImageButton>(R.id.imageButton6)
+        categoryView6 = view.findViewById<TextView>(R.id.categoryTextView6)
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_spending, container, false)
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AddSpendingFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AddSpendingFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        logoutButton.setOnClickListener {
+            // navigate to another fragment after successful logout
+            userViewModel.setUser(UserState())
+            lifecycleScope.launch {
+                Navigation.findNavController(view)
+                    .navigate(R.id.action_addSpendingFragment_to_loginFragment)
             }
+        }
+        var category = categoryView.text.toString()
+        addSpendingButton.setOnClickListener {
+            Log.d("Dialog1", "Button clicked")
+            showDialog(category)
+        }
+        category = categoryView2.text.toString()
+        addSpendingButton2.setOnClickListener {
+            showDialog(category)
+        }
+        category = categoryView3.text.toString()
+        addSpendingButton3.setOnClickListener {
+            showDialog(category)
+        }
+        category = categoryView4.text.toString()
+        addSpendingButton4.setOnClickListener {
+            showDialog(category)
+        }
+        category = categoryView5.text.toString()
+        addSpendingButton5.setOnClickListener {
+            showDialog(category)
+        }
+        category = categoryView6.text.toString()
+        addSpendingButton6.setOnClickListener {
+            showDialog(category)
+        }
     }
 
     private fun showDialog(category : String) {
@@ -135,6 +129,7 @@ class AddSpendingFragment : Fragment() {
             .setNegativeButton("Cancel") {dialog,_ ->
                 dialog.dismiss()
             }
-
+            .create()
+            .show()
     }
 }

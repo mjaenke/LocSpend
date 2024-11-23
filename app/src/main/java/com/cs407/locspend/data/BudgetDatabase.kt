@@ -131,7 +131,7 @@ interface BudgetDao {
     suspend fun getById(id : Int) : Budget
 
     // Query to get Budget by category
-    @Query("SELECT * FROM budget WHERE category = :category")
+    @Query("SELECT * FROM budget WHERE budgetCategory = :category")
     suspend fun getByCategory(category : String) : Budget
 
     // Query to get BudgetId by its rowId
@@ -201,7 +201,7 @@ interface DeleteDao {
     }
 }
 
-@Database(entities = [User::class, Budget::class, UserBudgetRelation::class], version = 2)
+@Database(entities = [User::class, Budget::class, UserBudgetRelation::class], version = 3)
 
 @TypeConverters(Converters::class)
 
@@ -221,7 +221,9 @@ abstract class BudgetDatabase : RoomDatabase() {
                     context.applicationContext,
                     BudgetDatabase::class.java,
                     context.getString(R.string.budget_database),
-                ).build()
+                )
+                    .fallbackToDestructiveMigration() // New DB (for development ONLY)
+                    .build()
                 INSTANCE = instance
                 // return instance
                 instance
