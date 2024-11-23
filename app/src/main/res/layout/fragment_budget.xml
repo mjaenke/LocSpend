@@ -119,10 +119,6 @@
                     layout="@layout/budget_table" />
 
                 <include
-                    android:id="@+id/budget_table_transportation"
-                    layout="@layout/budget_table" />
-
-                <include
                     android:id="@+id/budget_table_entertainment"
                     layout="@layout/budget_table" />
                 <include

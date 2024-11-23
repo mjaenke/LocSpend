@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -112,24 +113,24 @@ class BudgetFragment (
         }
 
         budgetItemDining.findViewById<TextView>(R.id.category).text = "Dining"
-        budgetItemDining.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
-        budgetItemDining.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
-        budgetItemDining.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
+        budgetItemDining.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
+        budgetItemDining.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
+        budgetItemDining.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
 
         // Set values for "Groceries" budget item
         lifecycleScope.launch{
 
-            val budget = budgetDB.budgetDao().getByCategory("Groceries")
+            val budget = budgetDB.budgetDao().getByCategory("Grocery")
             categoryBudget = budget.budgetAmount
             budgetSpent = budget.budgetSpent
             remaining = categoryBudget - budgetSpent
 
         }
 
-        budgetItemGroceries.findViewById<TextView>(R.id.category).text = "Groceries"
-        budgetItemGroceries.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
-        budgetItemGroceries.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
-        budgetItemGroceries.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
+        budgetItemGroceries.findViewById<TextView>(R.id.category).text = "Grocery"
+        budgetItemGroceries.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
+        budgetItemGroceries.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
+        budgetItemGroceries.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
 
         // Set values for "Clothing" budget item
         lifecycleScope.launch{
@@ -142,9 +143,9 @@ class BudgetFragment (
         }
 
         budgetItemClothing.findViewById<TextView>(R.id.category).text = "Clothing"
-        budgetItemClothing.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
-        budgetItemClothing.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
-        budgetItemClothing.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
+        budgetItemClothing.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
+        budgetItemClothing.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
+        budgetItemClothing.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
 
         //Set values for "Transportation" budget item
         lifecycleScope.launch{
@@ -157,9 +158,9 @@ class BudgetFragment (
         }
 
         budgetItemTransportation.findViewById<TextView>(R.id.category).text = "Transportation"
-        budgetItemTransportation.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
-        budgetItemTransportation.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
-        budgetItemTransportation.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
+        budgetItemTransportation.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
+        budgetItemTransportation.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
+        budgetItemTransportation.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
 
         // Set values for "Entertainment" budget item
         lifecycleScope.launch{
@@ -172,9 +173,9 @@ class BudgetFragment (
         }
 
         budgetItemEntertainment.findViewById<TextView>(R.id.category).text = "Entertainment"
-        budgetItemEntertainment.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
-        budgetItemEntertainment.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
-        budgetItemEntertainment.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
+        budgetItemEntertainment.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
+        budgetItemEntertainment.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
+        budgetItemEntertainment.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
 
         // Set values for "Miscellaneous" budget item
         lifecycleScope.launch{
@@ -187,9 +188,9 @@ class BudgetFragment (
         }
 
         budgetItemMiscellaneous.findViewById<TextView>(R.id.category).text = "Miscellaneous"
-        budgetItemMiscellaneous.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
-        budgetItemMiscellaneous.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
-        budgetItemMiscellaneous.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
+        budgetItemMiscellaneous.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
+        budgetItemMiscellaneous.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
+        budgetItemMiscellaneous.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
 
         // Update the total budget information at the top
         lifecycleScope.launch{
@@ -197,33 +198,33 @@ class BudgetFragment (
         }
 
         // Create onClickListener for the add spending button on each category
-        val addButton = budgetItemDining.findViewById<TextView>(R.id.add_button)
+        val addButton = budgetItemDining.findViewById<ImageButton>(R.id.add_button)
         addButton.setOnClickListener {
             showDialog(budgetItemDining)
         }
 
 
-        val addButton1 = budgetItemGroceries.findViewById<TextView>(R.id.add_button)
+        val addButton1 = budgetItemGroceries.findViewById<ImageButton>(R.id.add_button)
         addButton1.setOnClickListener {
             showDialog(budgetItemGroceries)
         }
 
-        val addButton2 = budgetItemClothing.findViewById<TextView>(R.id.add_button)
+        val addButton2 = budgetItemClothing.findViewById<ImageButton>(R.id.add_button)
         addButton2.setOnClickListener {
             showDialog(budgetItemClothing)
         }
 
-        val addButton3 = budgetItemTransportation.findViewById<TextView>(R.id.add_button)
+        val addButton3 = budgetItemTransportation.findViewById<ImageButton>(R.id.add_button)
         addButton3.setOnClickListener {
             showDialog(budgetItemTransportation)
         }
 
-        val addButton4 = budgetItemEntertainment.findViewById<TextView>(R.id.add_button)
+        val addButton4 = budgetItemEntertainment.findViewById<ImageButton>(R.id.add_button)
         addButton4.setOnClickListener {
             showDialog(budgetItemEntertainment)
         }
 
-        val addButton5 = budgetItemMiscellaneous.findViewById<TextView>(R.id.add_button)
+        val addButton5 = budgetItemMiscellaneous.findViewById<ImageButton>(R.id.add_button)
         addButton5.setOnClickListener {
             showDialog(budgetItemMiscellaneous)
         }
@@ -330,10 +331,10 @@ class BudgetFragment (
         var monthPercentage = ((total_days - day)/total_days) * 100
 
 
-        totalRemainingText.text = newRemaining.toString()
-        totalSpentText.text = totalSpent.toString()
-        budgetPercentageText.text = newPercentage.toString()
-        monthPercentageText.text = monthPercentage.toString()
+        totalRemainingText.text = "Total Remaining: " + newRemaining.toString()
+        totalSpentText.text = "Total Spent: " + totalSpent.toString()
+        budgetPercentageText.text = "$newPercentage%"
+        monthPercentageText.text = "$monthPercentage%"
     }
 }
 
