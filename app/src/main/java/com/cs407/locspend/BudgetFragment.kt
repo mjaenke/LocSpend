@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -119,14 +120,15 @@ class BudgetFragment (
         // Set values for "Groceries" budget item
         lifecycleScope.launch{
 
-            val budget = budgetDB.budgetDao().getByCategory("Groceries")
+
+            val budget = budgetDB.budgetDao().getByCategory("Grocery")
             categoryBudget = budget.budgetAmount
             budgetSpent = budget.budgetSpent
             remaining = categoryBudget - budgetSpent
 
         }
 
-        budgetItemGroceries.findViewById<TextView>(R.id.category).text = "Groceries"
+        budgetItemGroceries.findViewById<TextView>(R.id.category).text = "Grocery"
         budgetItemGroceries.findViewById<TextView>(R.id.budget_value).text = categoryBudget.toString()
         budgetItemGroceries.findViewById<TextView>(R.id.spent_value).text = budgetSpent.toString()
         budgetItemGroceries.findViewById<TextView>(R.id.remaining_value).text = remaining.toString()
@@ -197,33 +199,33 @@ class BudgetFragment (
         }
 
         // Create onClickListener for the add spending button on each category
-        val addButton = budgetItemDining.findViewById<TextView>(R.id.add_button)
+        val addButton = budgetItemDining.findViewById<ImageButton>(R.id.add_button)
         addButton.setOnClickListener {
             showDialog(budgetItemDining)
         }
 
 
-        val addButton1 = budgetItemGroceries.findViewById<TextView>(R.id.add_button)
+        val addButton1 = budgetItemGroceries.findViewById<ImageButton>(R.id.add_button)
         addButton1.setOnClickListener {
             showDialog(budgetItemGroceries)
         }
 
-        val addButton2 = budgetItemClothing.findViewById<TextView>(R.id.add_button)
+        val addButton2 = budgetItemClothing.findViewById<ImageButton>(R.id.add_button)
         addButton2.setOnClickListener {
             showDialog(budgetItemClothing)
         }
 
-        val addButton3 = budgetItemTransportation.findViewById<TextView>(R.id.add_button)
+        val addButton3 = budgetItemTransportation.findViewById<ImageButton>(R.id.add_button)
         addButton3.setOnClickListener {
             showDialog(budgetItemTransportation)
         }
 
-        val addButton4 = budgetItemEntertainment.findViewById<TextView>(R.id.add_button)
+        val addButton4 = budgetItemEntertainment.findViewById<ImageButton>(R.id.add_button)
         addButton4.setOnClickListener {
             showDialog(budgetItemEntertainment)
         }
 
-        val addButton5 = budgetItemMiscellaneous.findViewById<TextView>(R.id.add_button)
+        val addButton5 = budgetItemMiscellaneous.findViewById<ImageButton>(R.id.add_button)
         addButton5.setOnClickListener {
             showDialog(budgetItemMiscellaneous)
         }
