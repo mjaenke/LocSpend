@@ -17,6 +17,7 @@ import com.cs407.locspend.data.BudgetDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 /**
  * A simple [Fragment] subclass.
@@ -55,10 +56,10 @@ class BudgetFragment (
                             budgetCategory = category,
                             budgetAmount = 0.0,
                             budgetSpent = 0.0,
-                            budgetId = TODO(),
-                            budgetDetail = TODO(),
-                            budgetPath = TODO(),
-                            lastEdited = TODO()
+                            budgetId = 1,
+                            budgetDetail = "",
+                            budgetPath = "",
+                            lastEdited = Calendar.getInstance().time
                         ), userState.id
                     )
                 }
@@ -108,8 +109,6 @@ class BudgetFragment (
         }
     }
 
-
-
     private suspend fun addSpending(
         budgetTable: View,
         amount: Int
@@ -136,10 +135,10 @@ class BudgetFragment (
                     budgetCategory = category.toString(),
                     budgetAmount = total_budget,
                     budgetSpent = spent,
-                    budgetId = TODO(),
-                    budgetDetail = TODO(),
-                    budgetPath = TODO(),
-                    lastEdited = TODO()
+                    budgetId = 1,
+                    budgetDetail = "",
+                    budgetPath = "",
+                    lastEdited = Calendar.getInstance().time
                 ), userState.id
                 )
             }
@@ -212,8 +211,6 @@ class BudgetFragment (
         totalRemainingText.text = newRemaining.toString()
         totalSpentText.text = totalSpent.toString()
         budgetPercentageText.text = newPercentage.toString()
-
-
     }
 }
 
