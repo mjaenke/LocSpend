@@ -152,22 +152,6 @@ class HomeFragment : Fragment() {
         mapFragment?.getMapAsync { googleMap: GoogleMap ->
             setLocationMarker(googleMap, LatLng(location.latitude, location.longitude))
             getPlacesInfo()
-            val geocoder = Geocoder(requireContext(), Locale.getDefault())
-            geocoder.getFromLocation(
-                location.latitude,
-                location.longitude, 1
-            ) { addresses ->
-                if (addresses.isNotEmpty()) {
-                    val address = addresses[0]
-                    var addressString = ""
-                    address.subThoroughfare?.let { addressString += "$it " }
-                    address.thoroughfare?.let { addressString += "$it\n" }
-                    address.locality?.let { addressString += it }
-                    address.adminArea?.let { addressString += ", $it " }
-                    address.postalCode?.let { addressString += it }
-                    addressText.text = addressString
-                }
-            }
         }
     }
 
@@ -189,8 +173,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun getPlacesInfo() {
-        var name: String? = null
-        val placeFields: List<Place.Field> = listOf(Place.Field.NAME, Place.Field.TYPES, Place.Field.PRIMARY_TYPE)
+        val placeFields: List<Place.Field> = listOf(Place.Field.NAME, Place.Field.TYPES, Place.Field.ADDRESS)
         val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
         if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) ==
             PackageManager.PERMISSION_GRANTED) {
@@ -198,29 +181,34 @@ class HomeFragment : Fragment() {
             placeResponse.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val response = task.result
-
-                    val place = response.placeLikelihoods.first().place
-
-                    if (place.name != null) {
-                        name = place.name
-                    }
-
-                    val category = if (place.placeTypes?.size!! > 0) {
-                        place.placeTypes?.let { getCategory(it) }
+                    if (response.placeLikelihoods.isEmpty()) {
+                        Log.i("TAG", "No place found")
+                        addressText.text = getString(R.string.addrError)
+                        updateBudgetInfo("Miscellaneous")
                     } else {
-                        "Miscellaneous"
-                    }
+                        val place = response.placeLikelihoods.first().place
 
-                    if (name != null) {
-                        addressText.text = buildString {
-                            append("$name\n${addressText.text}")
+                        if (place.address != null) {
+                            addressText.text = place.address
+                            if (place.name != null) {
+                                addressText.text = buildString {
+                                    append("${place.name}\n${addressText.text}")
+                                }
+                            }
+                        } else {
+                            addressText.text = getString(R.string.addrError)
+                        }
+
+                        val category = if (place.placeTypes?.size!! > 0) {
+                            place.placeTypes?.let { getCategory(it) }
+                        } else {
+                            "Miscellaneous"
+                        }
+
+                        if (category != null) {
+                            updateBudgetInfo(category)
                         }
                     }
-
-                    if (category != null) {
-                        updateBudgetInfo(category)
-                    }
-
                 } else {
                     val exception = task.exception
                     if (exception is ApiException) {

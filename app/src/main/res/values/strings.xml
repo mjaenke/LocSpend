@@ -64,6 +64,7 @@
 
     <!-- Morgan -->
     <string name="addr">Please turn location permission on!</string>
+    <string name="addrError">Could not find address for current location!</string>
     <string name="category">Category: %1$s</string>
     <string name="plus">+</string>
     <string name="addSpending">Add spending</string>
