@@ -31,6 +31,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.model.PlaceLikelihood
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import java.time.LocalDate
 import java.util.Locale
 
 
@@ -150,6 +151,7 @@ class HomeFragment : Fragment() {
             childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
         mapFragment?.getMapAsync { googleMap: GoogleMap ->
             setLocationMarker(googleMap, LatLng(location.latitude, location.longitude))
+            getPlacesInfo()
             val geocoder = Geocoder(requireContext(), Locale.getDefault())
             geocoder.getFromLocation(
                 location.latitude,
@@ -166,7 +168,6 @@ class HomeFragment : Fragment() {
                     addressText.text = addressString
                 }
             }
-            getPlacesInfo()
         }
     }
 
@@ -188,9 +189,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun getPlacesInfo() {
-        var category: String? = null
         var name: String? = null
-        val placeFields: List<Place.Field> = listOf(Place.Field.NAME)
+        val placeFields: List<Place.Field> = listOf(Place.Field.NAME, Place.Field.TYPES, Place.Field.PRIMARY_TYPE)
         val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
         if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) ==
             PackageManager.PERMISSION_GRANTED) {
@@ -205,11 +205,10 @@ class HomeFragment : Fragment() {
                         name = place.name
                     }
 
-                    if (place.primaryType != null) {
-                        Log.i("TAG", "primary type ${place.primaryType}")
-                        category = place.primaryType
+                    val category = if (place.placeTypes?.size!! > 0) {
+                        place.placeTypes?.let { getCategory(it) }
                     } else {
-                        category = "DEFAULT"
+                        "Miscellaneous"
                     }
 
                     if (name != null) {
@@ -217,10 +216,10 @@ class HomeFragment : Fragment() {
                             append("$name\n${addressText.text}")
                         }
                     }
-                    if (category != null) {
-                        updateBudgetInfo(getCategory(category!!))
-                    }
 
+                    if (category != null) {
+                        updateBudgetInfo(category)
+                    }
 
                 } else {
                     val exception = task.exception
@@ -234,18 +233,47 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun getCategory(category: String) : String {
-        // TODO: Connect category to our categories
-        return "DEFAULT"
+    private fun getCategory(placeTypes: List<String>) : String {
+        // For each of our categories, set list of corresponding placeTypes
+        val dining = listOf("restaurant", "food", "cafe", "coffee_shop", "pub", "diner", "ice_cream_shop", "diner", "deli")
+        val grocery = listOf("grocery_or_supermarket", "supermarket", "liquor_store", "grocery_store", "convenience_store")
+        val clothing = listOf("clothing_store", "shoe_store")
+        val transportation = listOf("transit_station", "airport", "bus_station", "subway_station", "car_dealer", "car_rental", "car_repair", "car_wash", "gas_station", "parking")
+        val entertainment = listOf("movie_theater", "night_club", "art_gallery", "museum", "amusement_park", "bowling_alley", "concert_hall", "zoo")
+
+        // Check each placeType to see if it matches any of our categories
+        for (place in placeTypes) {
+            if (dining.contains(place)) {
+                return "Dining"
+            } else if (grocery.contains(place)) {
+                return "Grocery"
+            } else if (clothing.contains(place)) {
+                return "Clothing"
+            } else if (transportation.contains(place)) {
+                return "Transportation"
+            } else if (entertainment.contains(place)) {
+                return "Entertainment"
+            }
+        }
+
+        // If none of the place types match our categories, return miscellaneous
+        return "Miscellaneous"
     }
 
     private fun updateBudgetInfo(category: String) {
         // TODO: Replace numbers with actual values from database
+        val budget = 0
+        val spent = 0
+        val remaining = budget - spent
+        val percentMonth = 0
+        val percentBudget = if (budget == 0) 100 else ((spent / budget) * 100f).toInt()
+
+        // Set HomeFragment textviews to correct budget values
         categoryText.text = getString(R.string.category, category)
-        budgetText.text = getString(R.string.diningBudget, category, 0)
-        spentText.text = getString(R.string.spent, 0)
-        remainingText.text = getString(R.string.remaining, 0)
-        summaryText.text = getString(R.string.summary, 0, 0)
+        budgetText.text = getString(R.string.diningBudget, category, budget)
+        spentText.text = getString(R.string.spent, spent)
+        remainingText.text = getString(R.string.remaining, remaining)
+        summaryText.text = getString(R.string.summary, percentBudget, percentMonth)
 
     }
 }
