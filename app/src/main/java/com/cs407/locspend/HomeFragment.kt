@@ -2,7 +2,6 @@ package com.cs407.locspend
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -13,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -28,11 +26,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.PlaceLikelihood
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
-import java.time.LocalDate
-import java.util.Locale
 import androidx.fragment.app.activityViewModels
 
 
@@ -69,7 +64,7 @@ class HomeFragment : Fragment() {
         remainingText = view.findViewById(R.id.home_remaining)
         summaryText = view.findViewById(R.id.home_summary)
 
-        // Set HomeFragment textviews to correct values from the view model
+        // Set HomeFragment text views to correct values from the view model
         addressText.text = homeViewModel.address
         categoryText.text = getString(R.string.category, homeViewModel.category)
         budgetText.text = getString(R.string.diningBudget, homeViewModel.category, homeViewModel.budget)
@@ -193,9 +188,9 @@ class HomeFragment : Fragment() {
                 if (task.isSuccessful) {
                     val response = task.result
                     if (response.placeLikelihoods.isEmpty()) {
-                        Log.i("TAG", "No place found")
                         homeViewModel.address = getString(R.string.addrError)
-                        updateBudgetInfo("Miscellaneous")
+                        homeViewModel.category = "Miscellaneous"
+                        updateBudgetInfo()
                     } else {
                         val place = response.placeLikelihoods.first().place
 
@@ -210,16 +205,13 @@ class HomeFragment : Fragment() {
                             homeViewModel.address = getString(R.string.addrError)
                         }
 
-                        if (place.placeTypes.size > 0) {
+                        if (place.placeTypes != null && place.placeTypes.size > 0) {
                             homeViewModel.category = getCategory(place.placeTypes)
                         } else {
                             homeViewModel.category = "Miscellaneous"
                         }
-
-
                         addressText.text = homeViewModel.address
-                        updateBudgetInfo(homeViewModel.category)
-
+                        updateBudgetInfo()
                     }
                 } else {
                     val exception = task.exception
@@ -260,7 +252,7 @@ class HomeFragment : Fragment() {
         return "Miscellaneous"
     }
 
-    private fun updateBudgetInfo(category: String) {
+    private fun updateBudgetInfo() {
         // TODO: Replace numbers with actual values from database
         // Set viewmodel values to correct values
         homeViewModel.budget = 0
@@ -268,7 +260,7 @@ class HomeFragment : Fragment() {
         homeViewModel.percentMonth = 0
         homeViewModel.percentBudget = if (homeViewModel.budget == 0) 100 else ((homeViewModel.spent / homeViewModel.budget) * 100f).toInt()
 
-        // Set HomeFragment textviews to correct budget values
+        // Set HomeFragment text views to correct budget values
         addressText.text = homeViewModel.address
         categoryText.text = getString(R.string.category, homeViewModel.category)
         budgetText.text = getString(R.string.diningBudget, homeViewModel.category, homeViewModel.budget)
