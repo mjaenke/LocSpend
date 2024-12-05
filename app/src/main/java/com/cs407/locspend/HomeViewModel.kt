@@ -1,6 +1,4 @@
 package com.cs407.locspend
-
-import android.provider.Settings.Global.getString
 import androidx.lifecycle.ViewModel
 
 class HomeViewModel: ViewModel() {
