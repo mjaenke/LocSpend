@@ -94,7 +94,10 @@ class HomeFragment : Fragment() {
 
         locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationListener = LocationListener { location: Location ->
-            updateLocationInfo(location)
+            if (isAdded) {
+                updateLocationInfo(location)
+            }
+            Log.e("HomeFragment", "fragment not attached, skipping location update")
         }
 
         // Check for location permission
@@ -153,11 +156,15 @@ class HomeFragment : Fragment() {
      * Adds a marker on the map at the current location.
      */
     private fun updateLocationInfo(location: Location) {
-        val mapFragment =
-            childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
-        mapFragment?.getMapAsync { googleMap: GoogleMap ->
-            setLocationMarker(googleMap, LatLng(location.latitude, location.longitude))
-            getPlacesInfo()
+        if (isAdded) {
+            val mapFragment =
+                childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
+            mapFragment?.getMapAsync { googleMap: GoogleMap ->
+                setLocationMarker(googleMap, LatLng(location.latitude, location.longitude))
+                getPlacesInfo()
+            }
+        } else {
+            Log.e("HomeFragment", "Fragment not added yet, skipping location update")
         }
     }
 
@@ -210,7 +217,6 @@ class HomeFragment : Fragment() {
                         } else {
                             homeViewModel.category = "Miscellaneous"
                         }
-                        addressText.text = homeViewModel.address
                         updateBudgetInfo()
                     }
                 } else {
@@ -263,10 +269,12 @@ class HomeFragment : Fragment() {
         // Set HomeFragment text views to correct budget values
         addressText.text = homeViewModel.address
         categoryText.text = getString(R.string.category, homeViewModel.category)
-        budgetText.text = getString(R.string.diningBudget, homeViewModel.category, homeViewModel.budget)
+        budgetText.text =
+            getString(R.string.diningBudget, homeViewModel.category, homeViewModel.budget)
         spentText.text = getString(R.string.spent, homeViewModel.spent)
-        remainingText.text = getString(R.string.remaining, homeViewModel.budget - homeViewModel.spent)
-        summaryText.text = getString(R.string.summary, homeViewModel.percentBudget, homeViewModel.percentMonth)
-
+        remainingText.text =
+            getString(R.string.remaining, homeViewModel.budget - homeViewModel.spent)
+        summaryText.text =
+           getString(R.string.summary, homeViewModel.percentBudget, homeViewModel.percentMonth)
     }
 }
