@@ -47,15 +47,15 @@
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/editTextNumber"
+                android:id="@+id/diningBudgetEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
                 android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
-
-                android:inputType="number" />
+                android:inputType="number"
+                android:imeOptions="actionDone" />
         </LinearLayout>
 
         <LinearLayout
@@ -74,14 +74,15 @@
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/editTextNumber2"
+                android:id="@+id/groceryBudgetEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
                 android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
-                android:inputType="number" />
+                android:inputType="number"
+                android:imeOptions="actionDone" />
         </LinearLayout>
 
         <LinearLayout
@@ -100,14 +101,15 @@
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/editTextNumber3"
+                android:id="@+id/clothingBudgetEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
                 android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
-                android:inputType="number" />
+                android:inputType="number"
+                android:imeOptions="actionDone" />
         </LinearLayout>
 
         <LinearLayout
@@ -126,15 +128,15 @@
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/editTextNumber4"
+                android:id="@+id/transportationBudgetEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
                 android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
-
-                android:inputType="number" />
+                android:inputType="number"
+                android:imeOptions="actionDone" />
         </LinearLayout>
 
         <LinearLayout
@@ -153,14 +155,15 @@
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/editTextNumber5"
+                android:id="@+id/entertainmentBudgetEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
                 android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
-                android:inputType="number" />
+                android:inputType="number"
+                android:imeOptions="actionDone" />
         </LinearLayout>
 
         <LinearLayout
@@ -179,14 +182,15 @@
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/editTextNumber6"
+                android:id="@+id/miscBudgetEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ems="5"
                 android:textColor="@color/editTextColor"
                 android:background="@drawable/rounded_edittext_background"
                 android:layout_marginStart="20dp"
-                android:inputType="number" />
+                android:inputType="number"
+                android:imeOptions="actionDone" />
         </LinearLayout>
 
         <LinearLayout
@@ -249,10 +253,10 @@
             android:id="@+id/test_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
             android:backgroundTint="@color/darkGrey"
             android:text="Logout"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/notificationSwitch" />

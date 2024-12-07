@@ -107,6 +107,12 @@ class LoginFragment(
 
         createAccount.setOnClickListener{
             lifecycleScope.launch {
+                // Clear DB for testing
+                /*
+                userPasswdKV.edit().clear().apply()
+                budgetDB.deleteDao().deleteAllUsers()
+                budgetDB.deleteDao().deleteAllBudgets()
+                 */
                 //navigate to the create account page
                 Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_createAccountFragment)
             }

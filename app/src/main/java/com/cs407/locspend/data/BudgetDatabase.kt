@@ -53,7 +53,7 @@ class Converters {
 data class Budget (
     @PrimaryKey(autoGenerate = true) val budgetId : Int = 0,
     val budgetCategory: String,
-    val budgetAmount: Double,
+    var budgetAmount: Double,
     val budgetSpent: Double,
 
     @ColumnInfo(typeAffinity = ColumnInfo.TEXT) val budgetDetail : String?,
@@ -131,8 +131,14 @@ interface BudgetDao {
     suspend fun getById(id : Int) : Budget
 
     // Query to get Budget by category
-    @Query("SELECT * FROM budget WHERE budgetCategory = :category")
-    suspend fun getByCategory(category : String) : Budget
+    @Query("""
+        SELECT * FROM Budget 
+        WHERE budgetCategory = :category 
+        AND budgetId IN (
+            SELECT budgetId FROM UserBudgetRelation WHERE userId = :userId
+        )
+    """)
+    suspend fun getByCategory(category : String, userId : Int) : Budget
 
     // Query to get BudgetId by its rowId
     @Query("SELECT budgetId FROM Budget WHERE rowid = :rowId")
