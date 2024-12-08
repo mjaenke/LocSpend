@@ -11,6 +11,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings.Global.getString
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -66,6 +67,8 @@ class NotificationHelper private constructor() {
     }
 
     fun showNotification(context : Context, id : Int) {
+        Log.d("Notification", "Show notification function reached")
+        sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED) {
             // If permission is not granted, exit without showing notification
@@ -95,7 +98,7 @@ class NotificationHelper private constructor() {
         context,
         item.getId(),
         ignoreIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_MUTABLE
         )
 
         val ignoreAction = NotificationCompat.Action.Builder(
@@ -111,7 +114,7 @@ class NotificationHelper private constructor() {
         context,
         item.getId(),
         startIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_MUTABLE
         )
 
         val startAction = NotificationCompat.Action.Builder(

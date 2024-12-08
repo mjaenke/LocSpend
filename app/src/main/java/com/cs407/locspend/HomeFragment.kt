@@ -33,7 +33,6 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import androidx.fragment.app.activityViewModels
-import com.android.volley.BuildConfig
 
 
 class HomeFragment : Fragment() {
