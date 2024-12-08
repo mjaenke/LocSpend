@@ -3,23 +3,23 @@ package com.cs407.locspend
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -27,17 +27,30 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import java.util.Locale
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
+import com.google.android.libraries.places.api.net.PlacesClient
+import androidx.fragment.app.activityViewModels
 
 
 class HomeFragment : Fragment() {
 
+    private val homeViewModel: HomeViewModel by activityViewModels() // access view model
+
     private lateinit var addressText: TextView
-    private lateinit var client: FusedLocationProviderClient
+    private lateinit var categoryText: TextView
+    private lateinit var budgetText: TextView
+    private lateinit var spentText: TextView
+    private lateinit var remainingText: TextView
+    private lateinit var summaryText: TextView
+
+    private lateinit var locationClient: FusedLocationProviderClient
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
     private lateinit var homeAddButton : Button
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var placesClient: PlacesClient
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,16 +62,46 @@ class HomeFragment : Fragment() {
 
         // Assign variable
         addressText = view.findViewById(R.id.addr)
+        categoryText = view.findViewById(R.id.home_category)
+        budgetText = view.findViewById(R.id.home_budget)
+        spentText = view.findViewById(R.id.home_spent)
+        remainingText = view.findViewById(R.id.home_remaining)
+        summaryText = view.findViewById(R.id.home_summary)
+
+        // Set HomeFragment text views to correct values from the view model
+        addressText.text = homeViewModel.address
+        categoryText.text = getString(R.string.category, homeViewModel.category)
+        budgetText.text = getString(R.string.diningBudget, homeViewModel.category, homeViewModel.budget)
+        spentText.text = getString(R.string.spent, homeViewModel.spent)
+        remainingText.text = getString(R.string.remaining, homeViewModel.budget - homeViewModel.spent)
+        summaryText.text = getString(R.string.summary, homeViewModel.percentBudget, homeViewModel.percentMonth)
 
         // Initialize location client
-        client = LocationServices
+        locationClient = LocationServices
             .getFusedLocationProviderClient(
                 requireActivity()
             )
 
+        // Define a variable to hold the Places API key.
+        val apiKey = BuildConfig.PLACES_API_KEY
+
+        // Log an error if apiKey is not set.
+        if (apiKey.isEmpty()) {
+            Log.e("Places test", "No api key")
+        }
+
+        // Initialize the SDK
+        Places.initializeWithNewPlacesApiEnabled(requireContext(), apiKey)
+
+        // Initialize places client
+        placesClient = Places.createClient(requireContext())
+
         locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationListener = LocationListener { location: Location ->
-            updateLocationInfo(location)
+            if (isAdded) {
+                updateLocationInfo(location)
+            }
+            Log.e("HomeFragment", "fragment not attached, skipping location update")
         }
 
         // Check for location permission
@@ -124,26 +167,15 @@ class HomeFragment : Fragment() {
      * Adds a marker on the map at the current location.
      */
     private fun updateLocationInfo(location: Location) {
-        val mapFragment =
-            childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
-        mapFragment?.getMapAsync { googleMap: GoogleMap ->
-            setLocationMarker(googleMap, LatLng(location.latitude, location.longitude))
-            val geocoder = Geocoder(requireContext(), Locale.getDefault())
-            geocoder.getFromLocation(
-                location.latitude,
-                location.longitude, 1
-            ) { addresses ->
-                if (addresses.isNotEmpty()) {
-                    val address = addresses[0]
-                    var addressString = ""
-                    address.subThoroughfare?.let { addressString += "$it " }
-                    address.thoroughfare?.let { addressString += "$it\n" }
-                    address.locality?.let { addressString += it }
-                    address.adminArea?.let { addressString += ", $it " }
-                    address.postalCode?.let { addressString += it }
-                    addressText.text = addressString
-                }
+        if (isAdded) {
+            val mapFragment =
+                childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
+            mapFragment?.getMapAsync { googleMap: GoogleMap ->
+                setLocationMarker(googleMap, LatLng(location.latitude, location.longitude))
+                getPlacesInfo()
             }
+        } else {
+            Log.e("HomeFragment", "Fragment not added yet, skipping location update")
         }
     }
 
@@ -194,5 +226,98 @@ class HomeFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "Context was null", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun getPlacesInfo() {
+        val placeFields: List<Place.Field> = listOf(Place.Field.NAME, Place.Field.TYPES, Place.Field.ADDRESS)
+        val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
+        if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED) {
+            val placeResponse = placesClient.findCurrentPlace(request)
+            placeResponse.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val response = task.result
+                    if (response.placeLikelihoods.isEmpty()) {
+                        homeViewModel.address = getString(R.string.addrError)
+                        homeViewModel.category = "Miscellaneous"
+                        updateBudgetInfo()
+                    } else {
+                        val place = response.placeLikelihoods.first().place
+
+                        if (place.address != null) {
+                            homeViewModel.address = place.address
+                            if (place.name != null) {
+                                homeViewModel.address = buildString {
+                                    append("${place.name}\n${homeViewModel.address}")
+                                }
+                            }
+                        } else {
+                            homeViewModel.address = getString(R.string.addrError)
+                        }
+
+                        if (place.placeTypes != null && place.placeTypes.size > 0) {
+                            homeViewModel.category = getCategory(place.placeTypes)
+                        } else {
+                            homeViewModel.category = "Miscellaneous"
+                        }
+                        updateBudgetInfo()
+                    }
+                } else {
+                    val exception = task.exception
+                    if (exception is ApiException) {
+                        Log.e("TAG", "Place not found: ${exception.statusCode}")
+                    }
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
+    private fun getCategory(placeTypes: List<String>) : String {
+        // For each of our categories, set list of corresponding placeTypes
+        val dining = listOf("restaurant", "food", "cafe", "coffee_shop", "pub", "diner", "ice_cream_shop", "diner", "deli")
+        val grocery = listOf("grocery_or_supermarket", "supermarket", "liquor_store", "grocery_store", "convenience_store")
+        val clothing = listOf("clothing_store", "shoe_store")
+        val transportation = listOf("transit_station", "airport", "bus_station", "subway_station", "car_dealer", "car_rental", "car_repair", "car_wash", "gas_station", "parking")
+        val entertainment = listOf("movie_theater", "night_club", "art_gallery", "museum", "amusement_park", "bowling_alley", "concert_hall", "zoo")
+
+        // Check each placeType to see if it matches any of our categories
+        for (place in placeTypes) {
+            if (dining.contains(place)) {
+                return "Dining"
+            } else if (grocery.contains(place)) {
+                return "Grocery"
+            } else if (clothing.contains(place)) {
+                return "Clothing"
+            } else if (transportation.contains(place)) {
+                return "Transportation"
+            } else if (entertainment.contains(place)) {
+                return "Entertainment"
+            }
+        }
+
+        // If none of the place types match our categories, return miscellaneous
+        return "Miscellaneous"
+    }
+
+    private fun updateBudgetInfo() {
+        // TODO: Replace numbers with actual values from database
+        // Set viewmodel values to correct values
+        homeViewModel.budget = 0
+        homeViewModel.spent = 0
+        homeViewModel.percentMonth = 0
+        homeViewModel.percentBudget = if (homeViewModel.budget == 0) 100 else ((homeViewModel.spent / homeViewModel.budget) * 100f).toInt()
+
+        // Set HomeFragment text views to correct budget values
+        addressText.text = homeViewModel.address
+        categoryText.text = getString(R.string.category, homeViewModel.category)
+        budgetText.text =
+            getString(R.string.diningBudget, homeViewModel.category, homeViewModel.budget)
+        spentText.text = getString(R.string.spent, homeViewModel.spent)
+        remainingText.text =
+            getString(R.string.remaining, homeViewModel.budget - homeViewModel.spent)
+        summaryText.text =
+           getString(R.string.summary, homeViewModel.percentBudget, homeViewModel.percentMonth)
     }
 }

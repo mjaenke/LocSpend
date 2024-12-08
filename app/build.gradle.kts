@@ -30,6 +30,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         viewBinding = true
     }
 
@@ -69,6 +70,8 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
 
+    implementation(platform(libs.kotlin.bom))
+    implementation(libs.places)
 }
 
 secrets {
