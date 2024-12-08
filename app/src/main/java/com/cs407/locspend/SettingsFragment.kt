@@ -1,7 +1,10 @@
 package com.cs407.locspend
 
+import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.fragment.app.Fragment
@@ -12,7 +15,11 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
@@ -39,6 +46,7 @@ class SettingsFragment (
     private lateinit var budgetDB: BudgetDatabase
 
     private lateinit var logoutButton: Button
+    private lateinit var notificationSwitch : Switch
     private lateinit var userViewModel: UserViewModel
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -70,6 +78,7 @@ class SettingsFragment (
         entertainmentBudgetEditText = view.findViewById(R.id.entertainmentBudgetEditText)
         miscBudgetEditText = view.findViewById(R.id.miscBudgetEditText)
 
+        notificationSwitch = view.findViewById(R.id.notificationSwitch)
 
         // Initialize dark mode switch
         val darkModeSwitch: Switch = view.findViewById(R.id.darkModeSwitch)
@@ -97,6 +106,42 @@ class SettingsFragment (
         setBudgetEditTextListener(entertainmentBudgetEditText, "Entertainment")
         setBudgetEditTextListener(miscBudgetEditText, "Miscellaneous")
 
+        val notificationSwitch : Switch = view.findViewById(R.id.notificationSwitch)
+        val areNotificationsOn = sharedPreferences.getBoolean("notifications_enabled", false)
+        notificationSwitch.isChecked = areNotificationsOn
+
+        val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                //permission is granted, save to shared preferences
+                sharedPreferences.edit().putBoolean("notifications_enabled", true).apply()
+                Toast.makeText(requireContext(), "Notifications are enabled", Toast.LENGTH_SHORT).show()
+            } else {
+                notificationSwitch.isChecked = false
+                Toast.makeText(
+                    requireContext(),
+                    "Permission denied. Notifications are disabled.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            //turn notifications on if they arent already
+            if (isChecked) {
+                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                    // If permission is not granted, request permission
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    sharedPreferences.edit().putBoolean("notifications_enabled", true).apply()
+                    Toast.makeText(requireContext(), "Notifications are enabled", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                sharedPreferences.edit().putBoolean("notifications_enabled", false).apply()
+                Toast.makeText(requireContext(), "Notifications are disabled", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         return view
     }
 
@@ -111,7 +156,11 @@ class SettingsFragment (
                     .navigate(R.id.action_settingsFragment_to_loginFragment)
             }
         }
+
+
     }
+
+
 
     private fun setBudgetEditTextListener(editText: EditText, category: String) {
         editText.setOnEditorActionListener { _, actionId, event ->
@@ -168,4 +217,6 @@ class SettingsFragment (
             miscBudgetEditText.setText(String.format("%.2f", miscBudget))
         }
     }
+
+
 }

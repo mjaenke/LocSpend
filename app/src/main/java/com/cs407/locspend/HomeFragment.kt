@@ -1,10 +1,12 @@
 package com.cs407.locspend
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,7 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -29,6 +33,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import androidx.fragment.app.activityViewModels
+import com.android.volley.BuildConfig
 
 
 class HomeFragment : Fragment() {
@@ -46,6 +51,7 @@ class HomeFragment : Fragment() {
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
     private lateinit var homeAddButton : Button
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var placesClient: PlacesClient
 
     override fun onCreateView(
@@ -113,6 +119,11 @@ class HomeFragment : Fragment() {
             startListening(locationListener)
         }
 
+
+        // Check for notification permission
+        requestPermission()
+
+
         // Return view
         return view
     }
@@ -163,6 +174,14 @@ class HomeFragment : Fragment() {
                 setLocationMarker(googleMap, LatLng(location.latitude, location.longitude))
                 getPlacesInfo()
             }
+
+            // create and show notification for the loc update
+            NotificationHelper.getInstance().createNotificationChannel(requireContext())
+            NotificationHelper.getInstance().appendNotificationItem(
+                categoryText.text.toString()
+            )
+            NotificationHelper.getInstance().showNotification(requireContext(), -1)
+
         } else {
             Log.e("HomeFragment", "Fragment not added yet, skipping location update")
         }
@@ -183,6 +202,38 @@ class HomeFragment : Fragment() {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(destination, 15f))
         // allow zooming on map
         googleMap.uiSettings.isZoomGesturesEnabled = true
+    }
+
+    // if the notifications are enabled, then set shared prefs
+    private val requestNotifPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        setNotificationsEnabled(this.context, true)
+    }
+
+    //requests notification permission from the user
+    @VisibleForTesting
+    public fun requestPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return
+        }
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(), android.Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestNotifPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    //sets shared preferences to true if the notifs are enabled
+    public fun setNotificationsEnabled(context: Context?, enabled: Boolean) {
+        if (context != null) {
+            sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+            sharedPreferences.edit().putBoolean("notifications_enabled", true).apply()
+        } else {
+            Toast.makeText(requireContext(), "Context was null", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun getPlacesInfo() {
