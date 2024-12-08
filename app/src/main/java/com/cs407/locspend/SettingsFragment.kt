@@ -1,7 +1,10 @@
 package com.cs407.locspend
 
+import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,7 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Switch
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import kotlinx.coroutines.launch
@@ -30,6 +37,7 @@ class SettingsFragment : Fragment() {
     private var param2: String? = null
 
     private lateinit var logoutButton: Button
+    private lateinit var notificationSwitch : Switch
     private lateinit var userViewModel: UserViewModel
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -51,6 +59,7 @@ class SettingsFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
         logoutButton = view.findViewById(R.id.test_logout)
+        notificationSwitch = view.findViewById(R.id.notificationSwitch)
 
         // Initialize dark mode switch
         val darkModeSwitch: Switch = view.findViewById(R.id.darkModeSwitch)
@@ -70,6 +79,42 @@ class SettingsFragment : Fragment() {
             )
         }
 
+        val notificationSwitch : Switch = view.findViewById(R.id.notificationSwitch)
+        val areNotificationsOn = sharedPreferences.getBoolean("notifications_enabled", false)
+        notificationSwitch.isChecked = areNotificationsOn
+
+        val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                //permission is granted, save to shared preferences
+                sharedPreferences.edit().putBoolean("notifications_enabled", true).apply()
+                Toast.makeText(requireContext(), "Notifications are enabled", Toast.LENGTH_SHORT).show()
+            } else {
+                notificationSwitch.isChecked = false
+                Toast.makeText(
+                    requireContext(),
+                    "Permission denied. Notifications are disabled.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            //turn notifications on if they arent already
+            if (isChecked) {
+                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                    // If permission is not granted, request permission
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    sharedPreferences.edit().putBoolean("notifications_enabled", true).apply()
+                    Toast.makeText(requireContext(), "Notifications are enabled", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                sharedPreferences.edit().putBoolean("notifications_enabled", false).apply()
+                Toast.makeText(requireContext(), "Notifications are disabled", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         return view
     }
 
@@ -82,7 +127,11 @@ class SettingsFragment : Fragment() {
                     .navigate(R.id.action_settingsFragment_to_loginFragment)
             }
         }
+
+
     }
+
+
 
     companion object {
         /**
@@ -103,4 +152,6 @@ class SettingsFragment : Fragment() {
                 }
             }
     }
+
+
 }

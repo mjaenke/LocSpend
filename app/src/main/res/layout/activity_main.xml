@@ -9,20 +9,25 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:id="@+id/linearLayout3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/textView7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/locSpendColor"
+            android:fontFamily="@font/baloo_tamma"
             android:gravity="center_horizontal"
             android:text="@string/header"
             android:textAlignment="center"
-            android:background="@color/locSpendColor"
             android:textColor="#ffffff"
-            android:fontFamily="monospace"
             android:textSize="34sp" />
 
         <androidx.fragment.app.FragmentContainerView

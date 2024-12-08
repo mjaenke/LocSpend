@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.preference)
     implementation(libs.play.services.maps)
     implementation(libs.androidx.room.common)
+    implementation(libs.androidx.core.ktx)
 
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)

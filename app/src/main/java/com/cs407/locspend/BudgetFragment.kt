@@ -50,6 +50,7 @@ class BudgetFragment (
         categories =
             arrayOf("Dining", "Grocery", "Clothing","Transportation","Entertainment","Miscellaneous").toList()
         val userState = userViewModel.userState.value
+        Log.d("UserState", userState.toString())
         lifecycleScope.launch {
             var countBudget = budgetDB.budgetDao().userBudgetCount(userState.id)
             if (countBudget == 0) {

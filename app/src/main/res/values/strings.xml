@@ -59,6 +59,11 @@
     <string name="terms_and_services">I agree to the Terms and Services</string>
     <string name="get_started">GET STARTED</string>
     <string name="fail_login">Wrong username or password</string>
+    <string name="channel_name">location_channel</string>
+    <string name="channel_description">notifications when location is updated</string>
+    <string name="check_budget">Check your budget?</string>
+    <string name="ignore">Ignore</string>
+    <string name="start_budget">Start Budgeting</string>
 
     <string name="fail_create">Create Account Failed</string>
 
