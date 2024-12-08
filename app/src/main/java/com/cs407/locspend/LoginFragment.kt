@@ -20,10 +20,9 @@ import com.cs407.locspend.data.BudgetDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.navigation.Navigation
-import com.cs407.locspend.data.User
 
 class LoginFragment(
-    private val injectedUserViewModel: UserViewModel? = null // For testing only
+    private val injectedUserViewModel: UserViewModel? = null 
 ) : Fragment()  {
 
     private lateinit var usernameEditText : EditText
