@@ -18,6 +18,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -39,7 +40,6 @@ import androidx.lifecycle.lifecycleScope
 import com.cs407.locspend.data.BudgetDatabase
 import kotlinx.coroutines.launch
 import java.util.Calendar
-
 
 class HomeFragment (
     private val injectedUserViewModel: UserViewModel? = null
@@ -185,14 +185,18 @@ class HomeFragment (
             mapFragment?.getMapAsync { googleMap: GoogleMap ->
                 setLocationMarker(googleMap, LatLng(location.latitude, location.longitude))
                 getPlacesInfo()
-            }
 
-            // create and show notification for the loc update
-            NotificationHelper.getInstance().createNotificationChannel(requireContext())
-            NotificationHelper.getInstance().appendNotificationItem(
-                categoryText.text.toString()
-            )
-            NotificationHelper.getInstance().showNotification(requireContext(), -1)
+                /* // create and show notification for the loc update
+                val category = homeViewModel.category.toString()
+                Log.e("Notification", category)
+                NotificationHelper.getInstance().createNotificationChannel(requireContext())
+                NotificationHelper.getInstance().appendNotificationItem(
+                    categoryText.text.toString()
+                )
+                NotificationHelper.getInstance().showNotification(requireContext(), -1)
+
+                 */
+            }
 
         } else {
             Log.e("HomeFragment", "Fragment not added yet, skipping location update")
@@ -281,6 +285,15 @@ class HomeFragment (
                             homeViewModel.category = "Miscellaneous"
                         }
                         updateBudgetInfo()
+
+                        // create and show notification for the loc update
+                        val category = homeViewModel.category.toString()
+                        Log.e("Notification", category)
+                        NotificationHelper.getInstance().createNotificationChannel(requireContext())
+                        NotificationHelper.getInstance().appendNotificationItem(
+                            category
+                        )
+                        NotificationHelper.getInstance().showNotification(requireContext(), -1)
                     }
                 } else {
                     val exception = task.exception

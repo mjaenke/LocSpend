@@ -11,6 +11,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings.Global.getString
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -23,8 +24,6 @@ class NotificationHelper private constructor() {
     private var notificationId : Int = 0
     // Location Category
     private var locationCategory : String? = null
-    // Message content
-    private var message : String? = null
 
     private val notificationItems : ArrayList<NotificationItem> = ArrayList()
 
@@ -57,7 +56,8 @@ class NotificationHelper private constructor() {
 
     }
 
-    fun appendNotificationItem(locationCategory : String) {
+    fun appendNotificationItem(category : String) {
+        locationCategory = category
         val item = NotificationItem(
             locationCategory,
             notificationItems.size
@@ -67,6 +67,8 @@ class NotificationHelper private constructor() {
 
     fun showNotification(context : Context, id : Int) {
         sharedPreferences = context.getSharedPreferences("com.cs407.locspend.userPasswdKV", Context.MODE_PRIVATE)
+        Log.d("Notification", "Show notification function reached")
+        sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED) {
             // If permission is not granted, exit without showing notification
@@ -96,7 +98,7 @@ class NotificationHelper private constructor() {
         context,
         item.getId(),
         ignoreIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_MUTABLE
         )
 
         val ignoreAction = NotificationCompat.Action.Builder(
@@ -112,7 +114,7 @@ class NotificationHelper private constructor() {
         context,
         item.getId(),
         startIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_MUTABLE
         )
 
         val startAction = NotificationCompat.Action.Builder(
@@ -121,13 +123,14 @@ class NotificationHelper private constructor() {
             startPendingIntent
         ).build()
 
+        val category = locationCategory
         // Setup NotificationCompat.Builder to create and customize notification
         var builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
             .setContentTitle("Location: " + locationCategory)
             .setContentText("Check your Budget?")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .addAction(ignoreAction)
             .addAction(startAction)
 
