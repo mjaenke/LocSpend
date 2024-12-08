@@ -6,35 +6,44 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Switch
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import com.cs407.locspend.data.Budget
+import com.cs407.locspend.data.BudgetDatabase
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
  * Use the [SettingsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SettingsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class SettingsFragment (
+    private val injectedUserViewModel: UserViewModel? = null
+): Fragment() {
+    private lateinit var diningBudgetEditText: EditText
+    private lateinit var groceryBudgetEditText: EditText
+    private lateinit var clothingBudgetEditText: EditText
+    private lateinit var transportationBudgetEditText: EditText
+    private lateinit var entertainmentBudgetEditText: EditText
+    private lateinit var miscBudgetEditText: EditText
+    private lateinit var budgetDB: BudgetDatabase
 
     private lateinit var logoutButton: Button
     private lateinit var notificationSwitch : Switch
@@ -44,11 +53,13 @@ class SettingsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
 
+        budgetDB = BudgetDatabase.getDatabase(requireContext())
+        userViewModel = if (injectedUserViewModel != null) {
+            injectedUserViewModel
+        } else {
+            ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+        }
         sharedPreferences = requireActivity().getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
     }
 
@@ -58,7 +69,15 @@ class SettingsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
+
         logoutButton = view.findViewById(R.id.test_logout)
+        diningBudgetEditText = view.findViewById(R.id.diningBudgetEditText)
+        groceryBudgetEditText = view.findViewById(R.id.groceryBudgetEditText)
+        clothingBudgetEditText = view.findViewById(R.id.clothingBudgetEditText)
+        transportationBudgetEditText = view.findViewById(R.id.transportationBudgetEditText)
+        entertainmentBudgetEditText = view.findViewById(R.id.entertainmentBudgetEditText)
+        miscBudgetEditText = view.findViewById(R.id.miscBudgetEditText)
+
         notificationSwitch = view.findViewById(R.id.notificationSwitch)
 
         // Initialize dark mode switch
@@ -78,6 +97,14 @@ class SettingsFragment : Fragment() {
                 if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             )
         }
+
+        // Set listeners for each EditText
+        setBudgetEditTextListener(diningBudgetEditText, "Dining")
+        setBudgetEditTextListener(groceryBudgetEditText, "Grocery")
+        setBudgetEditTextListener(clothingBudgetEditText, "Clothing")
+        setBudgetEditTextListener(transportationBudgetEditText, "Transportation")
+        setBudgetEditTextListener(entertainmentBudgetEditText, "Entertainment")
+        setBudgetEditTextListener(miscBudgetEditText, "Miscellaneous")
 
         val notificationSwitch : Switch = view.findViewById(R.id.notificationSwitch)
         val areNotificationsOn = sharedPreferences.getBoolean("notifications_enabled", false)
@@ -119,9 +146,11 @@ class SettingsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // Fetch and display current budget values
+        populateBudgetValues()
+
         logoutButton.setOnClickListener {
             // navigate to another fragment after successful logout
-//            userViewModel.setUser(UserState())
             lifecycleScope.launch {
                 Navigation.findNavController(view)
                     .navigate(R.id.action_settingsFragment_to_loginFragment)
@@ -133,24 +162,60 @@ class SettingsFragment : Fragment() {
 
 
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SettingsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SettingsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun setBudgetEditTextListener(editText: EditText, category: String) {
+        editText.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                val budget = editText.text.toString().toDoubleOrNull()
+                if (budget != null) {
+                    addBudgetDB(category, budget)
                 }
+                true
+            } else {
+                false
             }
+        }
+    }
+
+    private fun addBudgetDB(category: String, budget: Double) {
+        val userState = userViewModel.userState.value
+        lifecycleScope.launch {
+            val cur = budgetDB.budgetDao().getByCategory(category, userState.id)
+            budgetDB.budgetDao().upsertBudget(
+                Budget(
+                budgetCategory = category,
+                budgetAmount = budget,
+                budgetSpent = cur.budgetSpent,
+                budgetId = cur.budgetId,
+                budgetDetail = "",
+                budgetPath = "",
+                lastEdited = Calendar.getInstance().time
+            ), userState.id
+            )
+        }
+    }
+
+    private fun populateBudgetValues() {
+        val userState = userViewModel.userState.value
+        lifecycleScope.launch {
+            val diningBudget = budgetDB.budgetDao().getByCategory("Dining", userState.id).budgetAmount
+            diningBudgetEditText.setText(String.format("%.2f", diningBudget))
+
+            val groceryBudget = budgetDB.budgetDao().getByCategory("Grocery", userState.id).budgetAmount
+            groceryBudgetEditText.setText(String.format("%.2f", groceryBudget))
+
+            val clothingBudget = budgetDB.budgetDao().getByCategory("Clothing", userState.id).budgetAmount
+            clothingBudgetEditText.setText(String.format("%.2f", clothingBudget))
+
+            val transportationBudget = budgetDB.budgetDao().getByCategory("Transportation", userState.id).budgetAmount
+            transportationBudgetEditText.setText(String.format("%.2f", transportationBudget))
+
+            val entertainmentBudget = budgetDB.budgetDao().getByCategory("Entertainment", userState.id).budgetAmount
+            entertainmentBudgetEditText.setText(String.format("%.2f", entertainmentBudget))
+
+            val miscBudget = budgetDB.budgetDao().getByCategory("Miscellaneous", userState.id).budgetAmount
+            miscBudgetEditText.setText(String.format("%.2f", miscBudget))
+        }
     }
 
 

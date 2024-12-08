@@ -151,7 +151,7 @@ class AddSpendingFragment (
 
         // get the total budget for the category, amount spent, and current remaining
         lifecycleScope.launch {
-            val budget = budgetDB.budgetDao().getByCategory(budgetCategory.toString())
+            val budget = budgetDB.budgetDao().getByCategory(budgetCategory.toString(), userState.id)
             total_budget = budget.budgetAmount
             spent = budget.budgetSpent
             var id = budget.budgetId

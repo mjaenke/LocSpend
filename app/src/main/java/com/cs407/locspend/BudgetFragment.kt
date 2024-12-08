@@ -14,12 +14,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.cs407.locspend.data.Budget
 import com.cs407.locspend.data.BudgetDatabase
-import com.cs407.locspend.data.User
 import com.cs407.locspend.data.UserBudgetRelation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
+import kotlin.math.absoluteValue
 
 /**
  * A simple [Fragment] subclass.
@@ -49,28 +49,6 @@ class BudgetFragment (
         }
         categories =
             arrayOf("Dining", "Grocery", "Clothing","Transportation","Entertainment","Miscellaneous").toList()
-        val userState = userViewModel.userState.value
-        Log.d("UserState", userState.toString())
-        lifecycleScope.launch {
-            var countBudget = budgetDB.budgetDao().userBudgetCount(userState.id)
-            if (countBudget == 0) {
-                for (i in categories.indices){
-                    val newBudget = Budget(
-                        budgetCategory = categories[i],
-                        budgetAmount = 0.0,
-                        budgetSpent = 0.0,
-                        budgetId = 0,
-                        budgetDetail = "",
-                        budgetPath = "",
-                        lastEdited = Calendar.getInstance().time
-                    )
-                    val newRowId = budgetDB.budgetDao().upsert(newBudget)
-                    val newBudgetId = budgetDB.budgetDao().getByRowId(newRowId)
-                    budgetDB.budgetDao().insertRelation(UserBudgetRelation(userState.id, newBudgetId))
-
-                }
-            }
-        }
     }
 
     override fun onCreateView(
@@ -82,7 +60,6 @@ class BudgetFragment (
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         // Find each included layout by its unique ID
         val budgetItemDining = view.findViewById<View>(R.id.budget_table_dining)
@@ -99,100 +76,10 @@ class BudgetFragment (
         totalRemainingText = view.findViewById<TextView>(R.id.total_remaining)
         monthPercentageText = view.findViewById<TextView>(R.id.percent_month)
 
-        var categoryBudget = 0.0
-        var budgetSpent = 0.0
-        var remaining = 0.0
-
-        // Set values for "Dining" budget item
-        lifecycleScope.launch{
-
-            val budget = budgetDB.budgetDao().getByCategory("Dining")
-            categoryBudget = budget.budgetAmount
-            budgetSpent = budget.budgetSpent
-            remaining = categoryBudget - budgetSpent
-
+        lifecycleScope.launch {
+            initializeBudgets()
+            updateBudgetUI(view)
         }
-
-        budgetItemDining.findViewById<TextView>(R.id.category).text = "Dining"
-        budgetItemDining.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
-        budgetItemDining.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
-        budgetItemDining.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
-
-        // Set values for "Groceries" budget item
-        lifecycleScope.launch{
-
-
-            val budget = budgetDB.budgetDao().getByCategory("Grocery")
-            categoryBudget = budget.budgetAmount
-            budgetSpent = budget.budgetSpent
-            remaining = categoryBudget - budgetSpent
-
-        }
-
-        budgetItemGroceries.findViewById<TextView>(R.id.category).text = "Grocery"
-        budgetItemGroceries.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
-        budgetItemGroceries.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
-        budgetItemGroceries.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
-
-        // Set values for "Clothing" budget item
-        lifecycleScope.launch{
-
-            val budget = budgetDB.budgetDao().getByCategory("Clothing")
-            categoryBudget = budget.budgetAmount
-            budgetSpent = budget.budgetSpent
-            remaining = categoryBudget - budgetSpent
-
-        }
-
-        budgetItemClothing.findViewById<TextView>(R.id.category).text = "Clothing"
-        budgetItemClothing.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
-        budgetItemClothing.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
-        budgetItemClothing.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
-
-        //Set values for "Transportation" budget item
-        lifecycleScope.launch{
-
-            val budget = budgetDB.budgetDao().getByCategory("Transportation")
-            categoryBudget = budget.budgetAmount
-            budgetSpent = budget.budgetSpent
-            remaining = categoryBudget - budgetSpent
-
-        }
-
-        budgetItemTransportation.findViewById<TextView>(R.id.category).text = "Transportation"
-        budgetItemTransportation.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
-        budgetItemTransportation.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
-        budgetItemTransportation.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
-
-        // Set values for "Entertainment" budget item
-        lifecycleScope.launch{
-
-            val budget = budgetDB.budgetDao().getByCategory("Entertainment")
-            categoryBudget = budget.budgetAmount
-            budgetSpent = budget.budgetSpent
-            remaining = categoryBudget - budgetSpent
-
-        }
-
-        budgetItemEntertainment.findViewById<TextView>(R.id.category).text = "Entertainment"
-        budgetItemEntertainment.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
-        budgetItemEntertainment.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
-        budgetItemEntertainment.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
-
-        // Set values for "Miscellaneous" budget item
-        lifecycleScope.launch{
-
-            val budget = budgetDB.budgetDao().getByCategory("Miscellaneous")
-            categoryBudget = budget.budgetAmount
-            budgetSpent = budget.budgetSpent
-            remaining = categoryBudget - budgetSpent
-
-        }
-
-        budgetItemMiscellaneous.findViewById<TextView>(R.id.category).text = "Miscellaneous"
-        budgetItemMiscellaneous.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
-        budgetItemMiscellaneous.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
-        budgetItemMiscellaneous.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
 
         // Update the total budget information at the top
         lifecycleScope.launch{
@@ -204,7 +91,6 @@ class BudgetFragment (
         addButton.setOnClickListener {
             showDialog(budgetItemDining)
         }
-
 
         val addButton1 = budgetItemGroceries.findViewById<ImageButton>(R.id.add_button)
         addButton1.setOnClickListener {
@@ -230,15 +116,15 @@ class BudgetFragment (
         addButton5.setOnClickListener {
             showDialog(budgetItemMiscellaneous)
         }
-
     }
 
-    private suspend fun addSpendingToBudgetTable(
+    private fun addSpendingToBudgetTable(
         budgetTable: View,
-        amount: Int
+        amount: Double
     ) {
         //get budget table category
         var category = budgetTable.findViewById<TextView>(R.id.category).text
+        Log.d("Category Modified", category.toString())
         val currentSpent = budgetTable.findViewById<TextView>(R.id.spent_value)
         val currentRemaining = budgetTable.findViewById<TextView>(R.id.remaining_value)
         val userState = userViewModel.userState.value
@@ -248,36 +134,31 @@ class BudgetFragment (
 
         // get the total budget for the category, amount spent, and current remaining
         lifecycleScope.launch {
-            val budget = budgetDB.budgetDao().getByCategory(category.toString())
+            val budget = budgetDB.budgetDao().getByCategory(category.toString(), userState.id)
+            Log.d("Budget", budget.toString())
             total_budget = budget.budgetAmount
             spent = budget.budgetSpent
-            var id = budget.budgetId
+            Log.d("Top Spent", spent.toString())
+            Log.d("Amount", amount.toString())
 
-            if (spent != null) {
-                spent = spent + amount
-                budgetDB.budgetDao().upsertBudget(Budget(
-                    budgetCategory = category.toString(),
-                    budgetAmount = total_budget,
-                    budgetSpent = spent,
-                    budgetId = 1,
-                    budgetDetail = "",
-                    budgetPath = "",
-                    lastEdited = Calendar.getInstance().time
-                ), userState.id
-                )
-            }
+            spent = spent + amount
+            budgetDB.budgetDao().upsertBudget(Budget(
+                budgetCategory = category.toString(),
+                budgetAmount = total_budget,
+                budgetSpent = spent,
+                budgetId = budget.budgetId,
+                budgetDetail = "",
+                budgetPath = "",
+                lastEdited = Calendar.getInstance().time
+            ), userState.id)
 
-            if (remaining != null) {
-                remaining = total_budget - spent
-            }
+            remaining = total_budget - spent
 
+            //put new values in the budget table
+            currentSpent.text = spent.toString()
+            currentRemaining.text = remaining.toString()
+            updateTotalBudget()
         }
-
-        //put new values in the budget table
-        currentSpent.text = spent.toString()
-        currentRemaining.text = remaining.toString()
-        updateTotalBudget()
-
     }
 
     private fun showDialog(categoryView : View) {
@@ -289,9 +170,7 @@ class BudgetFragment (
             .setPositiveButton("Ok") {dialog,_ ->
                 val userInput = input.text.toString()
                 lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        addSpendingToBudgetTable(categoryView, userInput.toInt())
-                    }
+                    addSpendingToBudgetTable(categoryView, userInput.toDouble())
                 }
                 dialog.dismiss()
             }
@@ -300,7 +179,6 @@ class BudgetFragment (
             }
             .show()
             .create()
-
     }
 
     private suspend fun updateTotalBudget(){
@@ -308,6 +186,7 @@ class BudgetFragment (
         var totalSpent = 0.0
         var newRemaining = 0.0
         var newPercentage = 0.0
+        var newThruBudgetPercent = 0
 
         val userState = userViewModel.userState.value
 
@@ -320,9 +199,8 @@ class BudgetFragment (
         }
 
         if (totalBudget != 0.0){
-            newPercentage = (totalBudget - totalSpent)/totalBudget
-        } else {
-            newPercentage = 0.0
+            newPercentage = (totalSpent/totalBudget) * 100
+            newThruBudgetPercent = newPercentage.toInt()
         }
         newRemaining = totalBudget - totalSpent
 
@@ -330,13 +208,80 @@ class BudgetFragment (
         val calendar = Calendar.getInstance()
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         val total_days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-        var monthPercentage = ((total_days - day)/total_days) * 100
+        val monthPercentage = ((day / total_days.toDouble()) * 100).toInt()
 
+        totalBudgetText.text = "Total Budget: $" + totalBudget.toString()
+        if (newRemaining < 0){
+            totalRemainingText.text = "Total Remaining: -$" + newRemaining.absoluteValue.toString()
+        } else {
+            totalRemainingText.text = "Total Remaining: $" + newRemaining.toString()
+        }
+        totalSpentText.text = "Total Spent: $" + totalSpent.toString()
+        budgetPercentageText.text = newThruBudgetPercent.toString() + "%"
+        monthPercentageText.text = monthPercentage.toString() + "%"
+    }
 
-        totalRemainingText.text = "Total Remaining: " + newRemaining.toString()
-        totalSpentText.text = "Total Spent: " + totalSpent.toString()
-        budgetPercentageText.text = "$newPercentage%"
-        monthPercentageText.text = "$monthPercentage%"
+    private suspend fun updateBudgetUI(view: View) {
+        withContext(Dispatchers.IO) {
+            val userState = userViewModel.userState.value
+            Log.d("User State UI", userState.toString())
+            val categoriesWithBudgets = categories.map { category ->
+                category to budgetDB.budgetDao().getByCategory(category, userState.id)
+            }
+
+            withContext(Dispatchers.Main) {
+                Log.d("Categories", categoriesWithBudgets.toString())
+                categoriesWithBudgets.forEach { (category, budget) ->
+                    Log.d("Budget", budget.toString())
+                    val budgetItem = when (category) {
+                        "Dining" -> view.findViewById<View>(R.id.budget_table_dining)
+                        "Grocery" -> view.findViewById<View>(R.id.budget_table_groceries)
+                        "Clothing" -> view.findViewById<View>(R.id.budget_table_clothing)
+                        "Transportation" -> view.findViewById<View>(R.id.budget_table_transportation)
+                        "Entertainment" -> view.findViewById<View>(R.id.budget_table_entertainment)
+                        "Miscellaneous" -> view.findViewById<View>(R.id.budget_table_miscellaneous)
+                        else -> null
+                    }
+
+                    budgetItem?.let {
+                        val categoryBudget = budget.budgetAmount
+                        val budgetSpent = budget.budgetSpent
+                        val remaining = categoryBudget - budgetSpent
+
+                        it.findViewById<TextView>(R.id.category).text = category
+                        it.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
+                        it.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
+                        it.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun initializeBudgets() {
+        val userState = userViewModel.userState.value
+        withContext(Dispatchers.IO) {
+            Log.d("User State", userState.toString())
+            val userId = userState.id
+
+            val countBudget = budgetDB.budgetDao().userBudgetCount(userId)
+            if (countBudget == 0) {
+                categories.forEach { category ->
+                    val newBudget = Budget(
+                        budgetCategory = category,
+                        budgetAmount = 0.0,
+                        budgetSpent = 0.0,
+                        budgetId = 0,
+                        budgetDetail = "",
+                        budgetPath = "",
+                        lastEdited = Calendar.getInstance().time
+                    )
+                    val newRowId = budgetDB.budgetDao().upsert(newBudget)
+                    val newBudgetId = budgetDB.budgetDao().getByRowId(newRowId)
+                    budgetDB.budgetDao().insertRelation(UserBudgetRelation(userId, newBudgetId))
+                }
+            }
+        }
     }
 }
 

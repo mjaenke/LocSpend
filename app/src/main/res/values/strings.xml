@@ -7,8 +7,8 @@
     <string name="total_remaining">Total Remaining: %1$d</string>
     <string name="percent_budget">65%</string>
     <string name="percent_month">50%</string>
-    <string name="through_budget">through budget</string>
-    <string name="through_month">through month</string>
+    <string name="through_budget">through\nbudget</string>
+    <string name="through_month">through\nmonth</string>
     <string name="table_category">Category</string>
 
     <string name="budget_database">budgetDatabase</string>
