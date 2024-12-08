@@ -24,8 +24,6 @@ class NotificationHelper private constructor() {
     private var notificationId : Int = 0
     // Location Category
     private var locationCategory : String? = null
-    // Message content
-    private var message : String? = null
 
     private val notificationItems : ArrayList<NotificationItem> = ArrayList()
 
@@ -58,7 +56,8 @@ class NotificationHelper private constructor() {
 
     }
 
-    fun appendNotificationItem(locationCategory : String) {
+    fun appendNotificationItem(category : String) {
+        locationCategory = category
         val item = NotificationItem(
             locationCategory,
             notificationItems.size
@@ -123,13 +122,14 @@ class NotificationHelper private constructor() {
             startPendingIntent
         ).build()
 
+        val category = locationCategory
         // Setup NotificationCompat.Builder to create and customize notification
         var builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
             .setContentTitle("Location: " + locationCategory)
             .setContentText("Check your Budget?")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .addAction(ignoreAction)
             .addAction(startAction)
 
