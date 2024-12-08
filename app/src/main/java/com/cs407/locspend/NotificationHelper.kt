@@ -124,7 +124,7 @@ class NotificationHelper private constructor() {
         var builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            .setContentTitle("Location: " + item.getLocationCategory())
+            .setContentTitle("Location: " + locationCategory)
             .setContentText("Check your Budget?")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .addAction(ignoreAction)

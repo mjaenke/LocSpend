@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
@@ -32,6 +33,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import androidx.fragment.app.activityViewModels
+import com.android.volley.BuildConfig
 
 
 class HomeFragment : Fragment() {
@@ -120,8 +122,6 @@ class HomeFragment : Fragment() {
 
         // Check for notification permission
         requestPermission()
-        NotificationHelper.getInstance().createNotificationChannel(requireContext())
-
 
 
         // Return view
@@ -174,6 +174,14 @@ class HomeFragment : Fragment() {
                 setLocationMarker(googleMap, LatLng(location.latitude, location.longitude))
                 getPlacesInfo()
             }
+
+            // create and show notification for the loc update
+            NotificationHelper.getInstance().createNotificationChannel(requireContext())
+            NotificationHelper.getInstance().appendNotificationItem(
+                categoryText.text.toString()
+            )
+            NotificationHelper.getInstance().showNotification(requireContext(), -1)
+
         } else {
             Log.e("HomeFragment", "Fragment not added yet, skipping location update")
         }
