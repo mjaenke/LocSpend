@@ -64,6 +64,7 @@ class AddSpendingFragment (
         } else {
             ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         }
+        budgetDB = BudgetDatabase.getDatabase(requireContext())
     }
 
     override fun onCreateView(
@@ -141,35 +142,36 @@ class AddSpendingFragment (
             .show()
     }
 
-    private suspend fun addSpending(
+    private fun addSpending(
         budgetCategory: String,
         amount: Double
     ) {
         val userState = userViewModel.userState.value
         var total_budget = 0.0
         var spent = 0.0
+        var remaining = 0.0
 
         // get the total budget for the category, amount spent, and current remaining
         lifecycleScope.launch {
-            val budget = budgetDB.budgetDao().getByCategory(budgetCategory.toString(), userState.id)
+            val budget = budgetDB.budgetDao().getByCategory(budgetCategory, userState.id)
+            Log.d("Budget", budget.toString())
             total_budget = budget.budgetAmount
             spent = budget.budgetSpent
-            var id = budget.budgetId
+            Log.d("Top Spent", spent.toString())
+            Log.d("Amount", amount.toString())
 
-            if (spent != null) {
-                spent = spent + amount
-                budgetDB.budgetDao().upsertBudget(
-                    Budget(
-                        budgetCategory = budgetCategory.toString(),
-                        budgetAmount = total_budget,
-                        budgetSpent = spent,
-                        budgetId = 1,
-                        budgetDetail = "",
-                        budgetPath = "",
-                        lastEdited = Calendar.getInstance().time
-                    ), userState.id
-                )
-            }
+            spent = spent + amount
+            budgetDB.budgetDao().upsertBudget(
+                Budget(
+                    budgetCategory = budgetCategory,
+                    budgetAmount = total_budget,
+                    budgetSpent = spent,
+                    budgetId = budget.budgetId,
+                    budgetDetail = "",
+                    budgetPath = "",
+                    lastEdited = Calendar.getInstance().time
+                ), userState.id
+            )
         }
     }
 }

@@ -51,6 +51,10 @@ class LoginFragment(
         } else {
             ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         }
+        val userState = userViewModel.userState.value
+        if (userState.id != 0) {
+            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_homeFragment)
+        }
 
         userPasswdKV = requireContext().getSharedPreferences(getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
         budgetDB =  BudgetDatabase.getDatabase(requireContext())
