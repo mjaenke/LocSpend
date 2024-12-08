@@ -34,6 +34,7 @@ class BudgetFragment (
     lateinit var totalRemainingText : TextView
     lateinit var budgetPercentageText : TextView
     lateinit var monthPercentageText : TextView
+    lateinit var dateText : TextView
     private lateinit var userViewModel: UserViewModel
     private lateinit var budgetDB : BudgetDatabase
     private lateinit var categories : List<String>
@@ -75,6 +76,7 @@ class BudgetFragment (
         budgetPercentageText = view.findViewById<TextView>(R.id.percent_budget)
         totalRemainingText = view.findViewById<TextView>(R.id.total_remaining)
         monthPercentageText = view.findViewById<TextView>(R.id.percent_month)
+        dateText = view.findViewById<TextView>(R.id.date)
 
         lifecycleScope.launch {
             initializeBudgets()
@@ -230,6 +232,12 @@ class BudgetFragment (
             }
 
             withContext(Dispatchers.Main) {
+                val calendar = Calendar.getInstance()
+                val month  = arrayOf("January", "February", "March", "April", "May", "June", "July", "August",
+                    "September", "October", "November", "December")[Calendar.getInstance().get(Calendar.MONTH)]
+
+                val year = calendar.get(Calendar.YEAR).toString()
+                dateText.text = month + " " + year
                 Log.d("Categories", categoriesWithBudgets.toString())
                 categoriesWithBudgets.forEach { (category, budget) ->
                     Log.d("Budget", budget.toString())

@@ -66,6 +66,7 @@ class NotificationHelper private constructor() {
     }
 
     fun showNotification(context : Context, id : Int) {
+        sharedPreferences = context.getSharedPreferences("com.cs407.locspend.userPasswdKV", Context.MODE_PRIVATE)
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED) {
             // If permission is not granted, exit without showing notification

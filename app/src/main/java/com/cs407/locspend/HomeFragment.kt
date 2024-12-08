@@ -1,5 +1,6 @@
 package com.cs407.locspend
 
+import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -33,10 +34,16 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import androidx.fragment.app.activityViewModels
-import com.android.volley.BuildConfig
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.cs407.locspend.data.BudgetDatabase
+import kotlinx.coroutines.launch
+import java.util.Calendar
 
 
-class HomeFragment : Fragment() {
+class HomeFragment (
+    private val injectedUserViewModel: UserViewModel? = null
+): Fragment() {
 
     private val homeViewModel: HomeViewModel by activityViewModels() // access view model
 
@@ -53,6 +60,8 @@ class HomeFragment : Fragment() {
     private lateinit var homeAddButton : Button
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var placesClient: PlacesClient
+    private lateinit var budgetDB: BudgetDatabase
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,6 +78,9 @@ class HomeFragment : Fragment() {
         spentText = view.findViewById(R.id.home_spent)
         remainingText = view.findViewById(R.id.home_remaining)
         summaryText = view.findViewById(R.id.home_summary)
+        budgetDB = BudgetDatabase.getDatabase(requireContext())
+        userViewModel = injectedUserViewModel ?: ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+
 
         // Set HomeFragment text views to correct values from the view model
         addressText.text = homeViewModel.address
@@ -109,11 +121,11 @@ class HomeFragment : Fragment() {
         // Check for location permission
         if (ContextCompat.checkSelfPermission(
                 requireActivity(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             // If no permission, request permission
-            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         } else {
             // With permission, start listening to location
             startListening(locationListener)
@@ -310,22 +322,57 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateBudgetInfo() {
-        // TODO: Replace numbers with actual values from database
         // Set viewmodel values to correct values
-        homeViewModel.budget = 0
-        homeViewModel.spent = 0
-        homeViewModel.percentMonth = 0
-        homeViewModel.percentBudget = if (homeViewModel.budget == 0) 100 else ((homeViewModel.spent / homeViewModel.budget) * 100f).toInt()
+        lifecycleScope.launch {
+            homeViewModel.budget = getTotalBudget()
+            homeViewModel.spent = getTotalSpent()
+            homeViewModel.percentMonth = getPercentageMonth()
+            homeViewModel.remaining = homeViewModel.budget - homeViewModel.spent
+            homeViewModel.percentBudget = ((homeViewModel.spent / homeViewModel.budget) * 100f).toInt()
 
-        // Set HomeFragment text views to correct budget values
-        addressText.text = homeViewModel.address
-        categoryText.text = getString(R.string.category, homeViewModel.category)
-        budgetText.text =
-            getString(R.string.diningBudget, homeViewModel.category, homeViewModel.budget)
-        spentText.text = getString(R.string.spent, homeViewModel.spent)
-        remainingText.text =
-            getString(R.string.remaining, homeViewModel.budget - homeViewModel.spent)
-        summaryText.text =
-           getString(R.string.summary, homeViewModel.percentBudget, homeViewModel.percentMonth)
+
+            // Set HomeFragment text views to correct budget values
+            addressText.text = homeViewModel.address
+            categoryText.text = getString(R.string.category, homeViewModel.category)
+            budgetText.text =
+                getString(R.string.diningBudget, homeViewModel.category, homeViewModel.budget)
+            spentText.text = getString(R.string.spent, homeViewModel.spent)
+            remainingText.text =
+                getString(R.string.remaining, homeViewModel.budget - homeViewModel.spent)
+            summaryText.text =
+                getString(R.string.summary, homeViewModel.percentBudget, homeViewModel.percentMonth)
+        }
     }
+
+    private suspend fun getTotalBudget(): Double {
+        val userState = userViewModel.userState.value
+        var totalBudget = 0.0
+        val budgets = budgetDB.deleteDao().getAllBudgetIdsByUser(userState.id)
+        for (budget in budgets) {
+            val current_budget = budgetDB.budgetDao().getById(budget)
+            totalBudget += current_budget.budgetAmount
+        }
+        return totalBudget
+    }
+
+    private suspend fun getTotalSpent() : Double {
+        val userState = userViewModel.userState.value
+        var totalSpent = 0.0
+        val budgets = budgetDB.deleteDao().getAllBudgetIdsByUser(userState.id)
+        for (budget in budgets) {
+            val current_budget = budgetDB.budgetDao().getById(budget)
+            totalSpent += current_budget.budgetSpent
+        }
+        return totalSpent
+    }
+
+    private fun getPercentageMonth() : Int {
+        val calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val totalDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        val monthPercentage = ((day / totalDays.toDouble()) * 100).toInt()
+        return monthPercentage
+    }
+
+
 }
