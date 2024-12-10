@@ -276,12 +276,14 @@ class HomeFragment : Fragment() {
 
                         // create and show notification for the loc update
                         val category = homeViewModel.category.toString()
-                        Log.e("Notification", category)
+                        /*Log.e("Notification", category)
                         NotificationHelper.getInstance().createNotificationChannel(requireContext())
                         NotificationHelper.getInstance().appendNotificationItem(
                             category
                         )
                         NotificationHelper.getInstance().showNotification(requireContext(), -1)
+
+                         */
                     }
                 } else {
                     val exception = task.exception
