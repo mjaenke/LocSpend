@@ -96,27 +96,31 @@ class AddSpendingFragment (
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         var category = categoryView.text.toString()
         addSpendingButton.setOnClickListener {
-            Log.d("Dialog1", "Button clicked")
             showDialog(category)
         }
-        category = categoryView2.text.toString()
+
         addSpendingButton2.setOnClickListener {
+            category = categoryView2.text.toString()
             showDialog(category)
         }
-        category = categoryView3.text.toString()
+
         addSpendingButton3.setOnClickListener {
+            category = categoryView3.text.toString()
             showDialog(category)
         }
-        category = categoryView4.text.toString()
+
         addSpendingButton4.setOnClickListener {
+            category = categoryView4.text.toString()
             showDialog(category)
         }
-        category = categoryView5.text.toString()
+
         addSpendingButton5.setOnClickListener {
+            category = categoryView5.text.toString()
             showDialog(category)
         }
-        category = categoryView6.text.toString()
+
         addSpendingButton6.setOnClickListener {
+            category = categoryView6.text.toString()
             showDialog(category)
         }
     }
@@ -131,6 +135,7 @@ class AddSpendingFragment (
                 val userInput = input.text.toString()
                 // needs to change in the database...
                 lifecycleScope.launch {
+                    Log.d("AddSpendingFragDialog category", category)
                     addSpending(category, userInput.toDouble())
                 }
                 dialog.dismiss()
@@ -143,17 +148,18 @@ class AddSpendingFragment (
     }
 
     private fun addSpending(
-        budgetCategory: String,
+        category: String,
         amount: Double
     ) {
         val userState = userViewModel.userState.value
         var total_budget = 0.0
         var spent = 0.0
         var remaining = 0.0
+        Log.d("AddSpendingFrag Category", category)
 
         // get the total budget for the category, amount spent, and current remaining
         lifecycleScope.launch {
-            val budget = budgetDB.budgetDao().getByCategory(budgetCategory, userState.id)
+            val budget = budgetDB.budgetDao().getByCategory(category, userState.id)
             Log.d("Budget", budget.toString())
             total_budget = budget.budgetAmount
             spent = budget.budgetSpent
@@ -163,7 +169,7 @@ class AddSpendingFragment (
             spent = spent + amount
             budgetDB.budgetDao().upsertBudget(
                 Budget(
-                    budgetCategory = budgetCategory,
+                    budgetCategory = category,
                     budgetAmount = total_budget,
                     budgetSpent = spent,
                     budgetId = budget.budgetId,

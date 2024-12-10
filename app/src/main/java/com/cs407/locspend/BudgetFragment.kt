@@ -80,13 +80,10 @@ class BudgetFragment (
 
         lifecycleScope.launch {
             initializeBudgets()
-            updateBudgetUI(view)
-        }
-
-        // Update the total budget information at the top
-        lifecycleScope.launch{
+            updateBudgetUI(requireView())
             updateTotalBudget()
         }
+
 
         // Create onClickListener for the add spending button on each category
         val addButton = budgetItemDining.findViewById<ImageButton>(R.id.add_button)
@@ -157,8 +154,7 @@ class BudgetFragment (
             remaining = total_budget - spent
 
             //put new values in the budget table
-            currentSpent.text = spent.toString()
-            currentRemaining.text = remaining.toString()
+            updateBudgetUI(requireView())
             updateTotalBudget()
         }
     }
@@ -212,13 +208,19 @@ class BudgetFragment (
         val total_days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
         val monthPercentage = ((day / total_days.toDouble()) * 100).toInt()
 
-        totalBudgetText.text = "Total Budget: $" + totalBudget.toString()
-        if (newRemaining < 0){
-            totalRemainingText.text = "Total Remaining: -$" + newRemaining.absoluteValue.toString()
+        // Format values to 2 decimal places
+        val totalBudgetFormatted = String.format("%.2f", totalBudget)
+        val totalSpentFormatted = String.format("%.2f", totalSpent)
+        val newRemainingFormatted = String.format("%.2f", newRemaining.absoluteValue)
+
+        // Update UI with formatted values
+        totalBudgetText.text = "Total Budget: $$totalBudgetFormatted"
+        if (newRemaining < 0) {
+            totalRemainingText.text = "Total Remaining: -$$newRemainingFormatted"
         } else {
-            totalRemainingText.text = "Total Remaining: $" + newRemaining.toString()
+            totalRemainingText.text = "Total Remaining: $$newRemainingFormatted"
         }
-        totalSpentText.text = "Total Spent: $" + totalSpent.toString()
+        totalSpentText.text = "Total Spent: $$totalSpentFormatted"
         budgetPercentageText.text = newThruBudgetPercent.toString() + "%"
         monthPercentageText.text = monthPercentage.toString() + "%"
     }
@@ -252,14 +254,25 @@ class BudgetFragment (
                     }
 
                     budgetItem?.let {
+                        Log.d("Budget Item", budget.toString())
                         val categoryBudget = budget.budgetAmount
                         val budgetSpent = budget.budgetSpent
                         val remaining = categoryBudget - budgetSpent
 
+                        val categoryBudgetFormatted = String.format("%.2f", categoryBudget)
+                        val budgetSpentFormatted = String.format("%.2f", budgetSpent)
+                        val remainingFormatted = String.format("%.2f", remaining.absoluteValue)
+
+
+
                         it.findViewById<TextView>(R.id.category).text = category
-                        it.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudget"
-                        it.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpent"
-                        it.findViewById<TextView>(R.id.remaining_value).text = "$$remaining"
+                        it.findViewById<TextView>(R.id.budget_value).text = "$$categoryBudgetFormatted"
+                        it.findViewById<TextView>(R.id.spent_value).text = "$$budgetSpentFormatted"
+                        if (remaining < 0) {
+                            it.findViewById<TextView>(R.id.remaining_value).text = "-$$remainingFormatted"
+                        } else {
+                            it.findViewById<TextView>(R.id.remaining_value).text = "$$remainingFormatted"
+                        }
                     }
                 }
             }
