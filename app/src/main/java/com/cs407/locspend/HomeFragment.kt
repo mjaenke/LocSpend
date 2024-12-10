@@ -40,6 +40,7 @@ import androidx.lifecycle.lifecycleScope
 import com.cs407.locspend.data.BudgetDatabase
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import kotlin.math.absoluteValue
 
 class HomeFragment (
     private val injectedUserViewModel: UserViewModel? = null
@@ -288,12 +289,14 @@ class HomeFragment (
 
                         // create and show notification for the loc update
                         val category = homeViewModel.category.toString()
-                        Log.e("Notification", category)
+                        /*Log.e("Notification", category)
                         NotificationHelper.getInstance().createNotificationChannel(requireContext())
                         NotificationHelper.getInstance().appendNotificationItem(
                             category
                         )
                         NotificationHelper.getInstance().showNotification(requireContext(), -1)
+
+                         */
                     }
                 } else {
                     val exception = task.exception
@@ -337,11 +340,15 @@ class HomeFragment (
     private fun updateBudgetInfo() {
         // Set viewmodel values to correct values
         lifecycleScope.launch {
-            homeViewModel.budget = getTotalBudget()
+            homeViewModel.budget = getCategoryBudget(homeViewModel.category)
             homeViewModel.spent = getTotalSpent()
             homeViewModel.percentMonth = getPercentageMonth()
             homeViewModel.remaining = homeViewModel.budget - homeViewModel.spent
-            homeViewModel.percentBudget = ((homeViewModel.spent / homeViewModel.budget) * 100f).toInt()
+            if (homeViewModel.budget != 0.0) {
+                homeViewModel.percentBudget = ((homeViewModel.spent / homeViewModel.budget) * 100f).toInt()
+            } else {
+                homeViewModel.percentBudget = 0
+            }
 
 
             // Set HomeFragment text views to correct budget values
@@ -350,22 +357,26 @@ class HomeFragment (
             budgetText.text =
                 getString(R.string.diningBudget, homeViewModel.category, homeViewModel.budget)
             spentText.text = getString(R.string.spent, homeViewModel.spent)
-            remainingText.text =
-                getString(R.string.remaining, homeViewModel.budget - homeViewModel.spent)
+            val remaining  = homeViewModel.budget - homeViewModel.spent
+            if (remaining < 0) {
+                remainingText.text = "Remaining: -$${String.format("%.2f", remaining.absoluteValue)}"
+            } else {
+                remainingText.text = "Remaining: $${String.format("%.2f", remaining)}"
+            }
+
             summaryText.text =
                 getString(R.string.summary, homeViewModel.percentBudget, homeViewModel.percentMonth)
         }
     }
 
-    private suspend fun getTotalBudget(): Double {
+    private suspend fun getCategoryBudget(category: String): Double {
         val userState = userViewModel.userState.value
-        var totalBudget = 0.0
-        val budgets = budgetDB.deleteDao().getAllBudgetIdsByUser(userState.id)
-        for (budget in budgets) {
-            val current_budget = budgetDB.budgetDao().getById(budget)
-            totalBudget += current_budget.budgetAmount
+        if (budgetDB.deleteDao().getAllBudgetIdsByUser(userState.id).size != 0) {
+            val budget = budgetDB.budgetDao().getByCategory(category, userState.id)
+            return budget.budgetAmount
+        } else {
+            return 0.0
         }
-        return totalBudget
     }
 
     private suspend fun getTotalSpent() : Double {

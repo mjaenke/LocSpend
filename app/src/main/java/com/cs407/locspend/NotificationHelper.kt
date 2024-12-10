@@ -17,6 +17,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
 
+
 class NotificationHelper private constructor() {
     lateinit var sharedPreferences: SharedPreferences
 
@@ -31,7 +32,7 @@ class NotificationHelper private constructor() {
         @Volatile
         private var instance: NotificationHelper? = null
 
-        const val CHANNEL_ID = "channel location"
+        const val CHANNEL_ID = "okay"
 
         fun getInstance(): NotificationHelper {
             return instance ?: synchronized(this){
@@ -45,13 +46,14 @@ class NotificationHelper private constructor() {
 
             val name = context.getString(R.string.channel_name)
             val descriptionText = context.getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_HIGH
 
-            val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
-            mChannel.description = descriptionText
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                setDescription(descriptionText)
+            }
 
             val notificationManager = context.getSystemService(NotificationManager::class.java)
-            notificationManager?.createNotificationChannel(mChannel)
+            notificationManager?.createNotificationChannel(channel)
         }
 
     }
@@ -128,9 +130,10 @@ class NotificationHelper private constructor() {
         var builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            .setContentTitle("Location: " + locationCategory)
+            .setContentTitle("Location Type: " + locationCategory)
             .setContentText("Check your Budget?")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .addAction(ignoreAction)
             .addAction(startAction)
 
