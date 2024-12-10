@@ -32,7 +32,7 @@ class NotificationHelper private constructor() {
         @Volatile
         private var instance: NotificationHelper? = null
 
-        const val CHANNEL_ID = "channel location"
+        const val CHANNEL_ID = "okay"
 
         fun getInstance(): NotificationHelper {
             return instance ?: synchronized(this){
