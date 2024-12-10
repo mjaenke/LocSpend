@@ -18,7 +18,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -131,11 +130,8 @@ class HomeFragment (
             // With permission, start listening to location
             startListening(locationListener)
         }
-
-
         // Check for notification permission
         requestPermission()
-
 
         // Return view
         return view
@@ -170,7 +166,7 @@ class HomeFragment (
         ) {
             locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
-                0L, 10f, locationListener
+                0L, 25f, locationListener
             )
         }
     }
@@ -186,17 +182,6 @@ class HomeFragment (
             mapFragment?.getMapAsync { googleMap: GoogleMap ->
                 setLocationMarker(googleMap, LatLng(location.latitude, location.longitude))
                 getPlacesInfo()
-
-                /* // create and show notification for the loc update
-                val category = homeViewModel.category.toString()
-                Log.e("Notification", category)
-                NotificationHelper.getInstance().createNotificationChannel(requireContext())
-                NotificationHelper.getInstance().appendNotificationItem(
-                    categoryText.text.toString()
-                )
-                NotificationHelper.getInstance().showNotification(requireContext(), -1)
-
-                 */
             }
 
         } else {
@@ -244,7 +229,7 @@ class HomeFragment (
     }
 
     //sets shared preferences to true if the notifs are enabled
-    public fun setNotificationsEnabled(context: Context?, enabled: Boolean) {
+    fun setNotificationsEnabled(context: Context?, enabled: Boolean) {
         if (context != null) {
             sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
             sharedPreferences.edit().putBoolean("notifications_enabled", true).apply()
@@ -286,17 +271,6 @@ class HomeFragment (
                             homeViewModel.category = "Miscellaneous"
                         }
                         updateBudgetInfo()
-
-                        // create and show notification for the loc update
-                        val category = homeViewModel.category.toString()
-                        /*Log.e("Notification", category)
-                        NotificationHelper.getInstance().createNotificationChannel(requireContext())
-                        NotificationHelper.getInstance().appendNotificationItem(
-                            category
-                        )
-                        NotificationHelper.getInstance().showNotification(requireContext(), -1)
-
-                         */
                     }
                 } else {
                     val exception = task.exception

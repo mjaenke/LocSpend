@@ -1,17 +1,13 @@
 package com.cs407.locspend
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -27,8 +23,6 @@ import com.cs407.locspend.databinding.ActivityMainBinding
 import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.fragment.app.activityViewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
@@ -105,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         category = ""
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationListener = LocationListener { location: Location ->
+        locationListener = LocationListener {
             getPlacesInfo()
         }
 
@@ -115,21 +109,8 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),1)
         } else {
             startListening(locationListener)
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                0L,0f,locationListener)
-            val location : Location? = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            if (location != null) {
-                updateLocationInfo(location)
-            }
         }
 
-
-    }
-
-    private fun updateLocationInfo(location: Location) {
-        val pastCategory = category
-        getPlacesInfo()
-        //only show a notification if the category has changed
 
     }
 
@@ -152,7 +133,7 @@ class MainActivity : AppCompatActivity() {
             ==PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
-                0L, 0f, locationListener
+                0L, 25f, locationListener
             )
         }
     }
